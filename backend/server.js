@@ -6,7 +6,7 @@ const https = require('https');
 const fs = require('fs');
 const helmet = require('helmet');
 const responseTime = require('response-time');
-const performanceLogger = require('./middleware/performanceLogger');
+const performanceLogger = require('./middlewares/performanceLogger');
 require('dotenv').config();
 
 const app = express();
