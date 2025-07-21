@@ -2,6 +2,8 @@
 const express = require('express');
 const cors = require('cors');
 const http = require('http');
+const https = require('https');
+const fs = require('fs');
 const helmet = require('helmet');
 const responseTime = require('response-time');
 const performanceLogger = require('./middlewares/performanceLogger');
@@ -9,16 +11,27 @@ require('dotenv').config();
 
 const app = express();
 
-// Create HTTP server (Render automatically upgrades to HTTPS)
-const server = http.createServer(app);
+// Load SSL Certificates
+let server;
+try {
+  const sslOptions = {
+    key: fs.readFileSync('localhost-key.pem'),
+    cert: fs.readFileSync('localhost.pem')
+  };
+  server = https.createServer(sslOptions, app);
+  console.log('HTTPS server will be used');
+} catch (err) {
+  server = http.createServer(app);
+  console.warn('SSL certs not found. Falling back to HTTP server');
+}
 
 // WebSocket setup
 const { Server } = require('socket.io');
 const io = new Server(server, {
   cors: {
     origin: '*',
-    methods: ['GET', 'POST'],
-  },
+    methods: ['GET', 'POST']
+  }
 });
 app.set('io', io);
 
@@ -35,6 +48,11 @@ app.use(helmet());
 app.use(responseTime());
 app.use(express.json());
 app.use(performanceLogger);
+
+// Optional: Root GET route to fix "Cannot GET /"
+app.get('/', (req, res) => {
+  res.send('Project Judgement API is running. Visit /api-docs for Swagger UI.');
+});
 
 // Routes
 const sequelize = require('./config/db');
@@ -59,6 +77,8 @@ app.use('/api/v1/commands', commandRoutes);
 app.use('/api/v1/logs', logRoutes);
 app.use('/api/v1/drones', droneRoutes);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+
+// Global Error Handler
 app.use(errorHandler);
 
 // DB sync & Start server
@@ -70,7 +90,7 @@ sequelize.authenticate()
   .then(() => {
     const PORT = process.env.PORT || 5000;
     server.listen(PORT, () => {
-      console.log(`Server + WebSocket running at http://localhost:${PORT}`);
+      console.log(`Server + WebSocket running on ${server instanceof https.Server ? 'HTTPS' : 'HTTP'} at port ${PORT}`);
     });
   })
-  .catch((err) => console.error('DB Connection Error:', err));
+  .catch(err => console.error('DB Connection Error:', err));
