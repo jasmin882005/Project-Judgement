@@ -45,8 +45,8 @@ const express = require("express");
 const router = express.Router();
 
 const { sendCommand, getCommandsByDrone } = require("../controllers/commandController");
-const verifyToken = require("../middleware/verifyToken");
-const roleCheck = require("../middleware/roleCheck"); // Add role check
+const verifyToken = require("../middlewares/verifyToken");
+const roleCheck = require("../middlewares/roleCheck"); // Add role check
 
 // Only admin can send drone commands
 router.post("/", verifyToken, roleCheck('admin'), sendCommand);
