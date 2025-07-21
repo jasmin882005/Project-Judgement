@@ -10,10 +10,6 @@ const options = {
         },
         servers: [
             {
-                url: 'http://localhost:5000',
-                description: 'Local server (HTTP)',
-            },
-            {
                 url: 'https://localhost:5000',
                 description: 'Local server (HTTPS)',
             },
