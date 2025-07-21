@@ -13,16 +13,23 @@ const app = express();
 
 // Load SSL Certificates
 let server;
-try {
-  const sslOptions = {
-    key: fs.readFileSync('localhost-key.pem'),
-    cert: fs.readFileSync('localhost.pem')
-  };
-  server = https.createServer(sslOptions, app);
-  console.log('HTTPS server will be used');
-} catch (err) {
-  server = http.createServer(app);
-  console.warn('SSL certs not found. Falling back to HTTP server');
+
+if (process.env.NODE_ENV === 'production') {
+  // On Render or other hosting, use default HTTP (Render adds HTTPS)
+  server = require('http').createServer(app);
+  console.log('Production mode: using HTTP (Render handles HTTPS)');
+} else {
+  try {
+    const sslOptions = {
+      key: fs.readFileSync('localhost-key.pem'),
+      cert: fs.readFileSync('localhost.pem')
+    };
+    server = https.createServer(sslOptions, app);
+    console.log('Local HTTPS server running');
+  } catch (err) {
+    server = http.createServer(app);
+    console.warn('Local SSL certs not found. Falling back to HTTP');
+  }
 }
 
 // WebSocket setup
