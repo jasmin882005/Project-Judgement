@@ -14,10 +14,10 @@ const {
   updateMission
 } = require('../controllers/missionController');
 
-const verifyToken = require('../middleware/verifyToken');
-const roleCheck = require('../middleware/roleCheck');
+const verifyToken = require('../middlewares/verifyToken');
+const roleCheck = require('../middlewares/roleCheck');
 const { missionValidationRules } = require('../validators/missionValidator');
-const validate = require('../middleware/validate');
+const validate = require('../middlewares/validate');
 const { Mission } = require('../models');
 
 /**
