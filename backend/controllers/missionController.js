@@ -1,5 +1,5 @@
 const Mission = require('../models/Mission');
-const redisClient = require('../utils/redisClient');
+// const redisClient = require('../utils/redisClient');
 
 // Helper: Validate mission fields
 const validateMissionInput = ({ name, objective, status, assignedDrone, waypoints }) => {
@@ -29,7 +29,7 @@ exports.createMission = async (req, res) => {
 
     const mission = await Mission.create({ name, objective, status, assignedDrone, waypoints });
 
-    await redisClient.del('missions');
+    // await redisClient.del('missions');
     res.status(201).json(mission);
   } catch (err) {
     res.status(500).json({ error: 'Failed to create mission' });
@@ -38,30 +38,30 @@ exports.createMission = async (req, res) => {
 
 // Fetch all missions (GET /api/missions) — with Redis retry fallback
 exports.getMissions = async (req, res) => {
-  let cachedMissions;
+  // let cachedMissions;
 
-  // Try fetching from Redis with fallback handling
-  try {
-    cachedMissions = await redisClient.get('missions');
-    if (cachedMissions) {
-      console.log('Served from Redis cache');
-      return res.status(200).json(JSON.parse(cachedMissions));
-    }
-  } catch (redisErr) {
-    console.warn('Redis unavailable, fallback to DB:', redisErr.message);
-  }
+  // // Try fetching from Redis with fallback handling
+  // try {
+  //   cachedMissions = await redisClient.get('missions');
+  //   if (cachedMissions) {
+  //     console.log('Served from Redis cache');
+  //     return res.status(200).json(JSON.parse(cachedMissions));
+  //   }
+  // } catch (redisErr) {
+  //   console.warn('Redis unavailable, fallback to DB:', redisErr.message);
+  // }
 
   // Redis miss or failure → fetch from DB
   try {
     const missions = await Mission.findAll();
 
     // Try setting the cache (if Redis comes back)
-    try {
-      await redisClient.set('missions', JSON.stringify(missions), { EX: 60 });
-      console.log('Cached missions in Redis');
-    } catch (setErr) {
-      console.warn('Failed to cache in Redis:', setErr.message);
-    }
+    // try {
+    //   await redisClient.set('missions', JSON.stringify(missions), { EX: 60 });
+    //   console.log('Cached missions in Redis');
+    // } catch (setErr) {
+    //   console.warn('Failed to cache in Redis:', setErr.message);
+    // }
 
     res.status(200).json(missions);
   } catch (err) {
@@ -88,7 +88,7 @@ exports.updateMission = async (req, res) => {
 
     if (updated[0] === 0) return res.status(404).json({ error: "Mission not found" });
 
-    await redisClient.del('missions');
+    // await redisClient.del('missions');
     res.json({ message: "Mission updated successfully" });
   } catch (err) {
     console.error("UPDATE ERROR:", err);
