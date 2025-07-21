@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 
 // Import middleware that checks for valid JWT token
-const verifyToken = require('../middleware/verifyToken');
+const verifyToken = require('../middlewares/verifyToken');
 
 // GET /api/private
 // This is a protected test route — only accessible if token is valid
