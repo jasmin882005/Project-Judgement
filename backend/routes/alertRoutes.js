@@ -8,7 +8,7 @@
 const express = require('express');
 const router = express.Router();
 const { createAlert, getAlerts } = require('../controllers/alertController');
-const verifyToken = require('../middleware/verifyToken');
+const verifyToken = require('../middlewares/verifyToken');
 const { Alert } = require('../models'); // For PUT route
 
 /**
