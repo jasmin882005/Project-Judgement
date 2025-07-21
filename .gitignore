@@ -5,6 +5,10 @@ backend/node_modules/
 *.log
 logs/
 
+# SSL certs
+localhost-key.pem
+localhost.pem
+
 # Environment files
 backend/.env
 
