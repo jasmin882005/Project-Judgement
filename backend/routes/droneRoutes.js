@@ -67,8 +67,8 @@
 
 const express = require('express');
 const router = express.Router();
-const verifyToken = require('../middleware/verifyToken');
-const roleCheck = require('../middleware/roleCheck');
+const verifyToken = require('../middlewares/verifyToken');
+const roleCheck = require('../middlewares/roleCheck');
 const { createDrone, getDroneStatus } = require('../controllers/droneController');
 
 // Add drone — admin only
