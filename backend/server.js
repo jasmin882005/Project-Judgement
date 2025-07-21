@@ -11,12 +11,12 @@ require('dotenv').config();
 
 const app = express();
 
-// Try loading SSL certificates
+// Load SSL Certificates 
 let server;
 try {
   const sslOptions = {
-    key: fs.readFileSync('server.key'),
-    cert: fs.readFileSync('server.cert')
+    key: fs.readFileSync('localhost-key.pem'),
+    cert: fs.readFileSync('localhost.pem')
   };
   server = https.createServer(sslOptions, app);
   console.log('HTTPS server will be used');
