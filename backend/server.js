@@ -61,7 +61,7 @@ const logRoutes = require('./routes/logRoutes');
 const droneRoutes = require('./routes/droneRoutes');
 
 const { swaggerUi, specs } = require('./swagger');
-const errorHandler = require('./middleware/errorHandler');
+const errorHandler = require('./middlewares/errorHandler');
 
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/telemetry', telemetryRoutes);
