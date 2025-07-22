@@ -57,6 +57,7 @@ app.use(express.json());
 app.use(performanceLogger);
 
 //Project Judgement API is Live
+//Project Judgement API is Live
 app.get('/', (req, res) => {
   res.send(`
     <!DOCTYPE html>
@@ -102,6 +103,10 @@ app.get('/', (req, res) => {
                 text-decoration: none;
                 backdrop-filter: blur(10px);
                 transition: all 0.3s ease;
+                margin: 10px;
+                display: inline-flex;
+                align-items: center;
+                gap: 10px;
             }
 
             a.button:hover {
@@ -116,6 +121,11 @@ app.get('/', (req, res) => {
                 bottom: 20px;
                 font-size: 0.9rem;
                 opacity: 0.8;
+            }
+
+            .button img {
+                width: 20px;
+                height: 20px;
             }
 
             @keyframes fadeIn {
@@ -133,7 +143,12 @@ app.get('/', (req, res) => {
     <body>
         <h1>Project Judgement API is Live</h1>
         <p>Welcome to the backend service. View full documentation below:</p>
-        <a class="button" href="/api-docs" target="_blank">View API Docs (Swagger UI)</a>
+
+        <a class="button" href="/api-docs" target="_blank">View API Docs</a>
+        <a class="button" href="https://github.com/jasmin882005/Project-Judgement/tree/backend-code-submission-jasmin/backend" target="_blank">
+            <img src="github.svg" alt="GitHub" />
+            GitHub Repo
+        </a>
 
         <div class="footer">Version: 1.0.0 | Build: 22 July 2025</div>
     </body>
