@@ -67,7 +67,7 @@ app.get('/', (req, res) => {
         <title>Project Judgement API</title>
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
         <style>
-            body, html {
+            html, body {
                 margin: 0;
                 padding: 0;
                 width: 100%;
@@ -156,6 +156,7 @@ app.get('/', (req, res) => {
             <div class="footer">Version: 1.0.0 | Build: 22 July 2025</div>
         </div>
 
+        <!-- Particle Script -->
         <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
         <script>
           particlesJS("particles-js", {
