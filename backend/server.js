@@ -58,8 +58,58 @@ app.use(performanceLogger);
 
 // Optional: Root GET route to fix "Cannot GET /"
 app.get('/', (req, res) => {
-  res.send('Project Judgement API is running. Visit /api-docs for Swagger UI.');
+  res.send(`
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>Project Judgement API</title>
+        <style>
+            body {
+                background-color: #0f172a;
+                color: #f8fafc;
+                font-family: 'Segoe UI', sans-serif;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                height: 100vh;
+                margin: 0;
+                text-align: center;
+            }
+            h1 {
+                font-size: 2.5rem;
+                margin-bottom: 1rem;
+            }
+            p {
+                font-size: 1.2rem;
+                margin-bottom: 1.5rem;
+            }
+            a {
+                color: #38bdf8;
+                font-weight: bold;
+                text-decoration: none;
+                border: 2px solid #38bdf8;
+                padding: 10px 20px;
+                border-radius: 8px;
+                transition: all 0.3s ease;
+            }
+            a:hover {
+                background-color: #38bdf8;
+                color: #0f172a;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Project Judgement API is Live</h1>
+        <p>Welcome to the backend service. View full documentation below:</p>
+        <a href="/api-docs" target="_blank">View API Docs (Swagger UI)</a>
+    </body>
+    </html>
+  `);
 });
+
 
 // Routes
 const sequelize = require('./config/db');
