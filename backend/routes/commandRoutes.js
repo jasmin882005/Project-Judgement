@@ -12,7 +12,7 @@
  *     summary: Send command to drone (admin only)
  *     tags: [Command]
  *     security:
- *       - bearerAuth: []
+ *       - JWTAuth: []
  *     requestBody:
  *       required: true
  *       content:
