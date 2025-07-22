@@ -94,6 +94,7 @@ app.get('/', (req, res) => {
           margin-top: 20px;
           text-decoration: none;
           color: #00b4ff;
+          font-weight: bold;
           border: 1px solid #00b4ff;
           padding: 10px 20px;
           border-radius: 5px;
