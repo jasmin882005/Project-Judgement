@@ -92,7 +92,7 @@ app.use(errorHandler);
 sequelize.authenticate()
   .then(() => {
     console.log('PostgreSQL Connected');
-    return sequelize.sync();
+    return sequelize.sync({ alter: true });
   })
   .then(() => {
     const PORT = process.env.PORT || 5000;
