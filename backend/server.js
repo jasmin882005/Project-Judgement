@@ -144,7 +144,7 @@ app.get('/', (req, res) => {
 
         <div class="button-group">
             <a class="button" href="/api-docs" target="_blank">View API Docs</a>
-            <a class="button" href="https://github.com/your-org/your-repo" target="_blank">GitHub Repo</a>
+            <a class="button" href="https://github.com/jasmin882005/Project-Judgement/tree/backend-code-submission-jasmin/backend" target="_blank">GitHub Repo</a>
         </div>
 
         <div class="footer">Version: 1.0.0 | Build: 22 July 2025</div>
