@@ -7,6 +7,7 @@ exports.createDrone = async (req, res) => {
 
     const drone = await Drone.create({
       droneId,
+      model,
       status,
       battery,
       gps: gps_location  // no stringify
