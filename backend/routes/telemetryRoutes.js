@@ -14,7 +14,7 @@ const { Telemetry } = require('../models');
  *     summary: Submit telemetry data
  *     tags: [Telemetry]
  *     security:
- *       - bearerAuth: []
+ *       - JWTAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -75,7 +75,7 @@ router.post('/', verifyToken, telemetryValidation, async (req, res) => {
  *     summary: Get latest telemetry data for a drone
  *     tags: [Telemetry]
  *     security:
- *       - bearerAuth: []
+ *       - JWTAuth: []
  *     parameters:
  *       - in: path
  *         name: droneId
@@ -98,7 +98,7 @@ router.get('/latest/:droneId', verifyToken, roleCheck('admin'), getLatestTelemet
  *     summary: Get all unique drone IDs
  *     tags: [Telemetry]
  *     security:
- *       - bearerAuth: []
+ *       - JWTAuth: []
  *     responses:
  *       200:
  *         description: List of unique drone IDs
@@ -124,7 +124,7 @@ router.get('/drone-ids', verifyToken, roleCheck('admin'), async (req, res) => {
  *     summary: Get latest telemetry record for a specific drone
  *     tags: [Telemetry]
  *     security:
- *       - bearerAuth: []
+ *       - JWTAuth: []
  *     parameters:
  *       - in: path
  *         name: droneId
