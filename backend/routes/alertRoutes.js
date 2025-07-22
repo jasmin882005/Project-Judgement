@@ -18,7 +18,7 @@ const { Alert } = require('../models'); // For PUT route
  *     summary: Create a new alert (from drone or AI)
  *     tags: [Alert]
  *     security:
- *       - bearerAuth: []
+ *       - JWTAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -60,7 +60,7 @@ router.post('/', verifyToken, createAlert);
  *     summary: Get all alerts (admin/operator)
  *     tags: [Alert]
  *     security:
- *       - bearerAuth: []
+ *       - JWTAuth: []
  *     responses:
  *       200:
  *         description: List of alerts
@@ -76,7 +76,7 @@ router.get('/', verifyToken, getAlerts);
  *     summary: Update an existing alert by ID
  *     tags: [Alert]
  *     security:
- *       - bearerAuth: []
+ *       - JWTAuth: []
  *     parameters:
  *       - in: path
  *         name: id
