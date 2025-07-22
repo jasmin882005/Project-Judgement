@@ -16,14 +16,14 @@ const options = {
         ],
         components: {
             securitySchemes: {
-                bearerAuth: {
+                JWTAuth: {  
                     type: 'http',
                     scheme: 'bearer',
                     bearerFormat: 'JWT',
                 },
             },
         },
-        security: [{ bearerAuth: [] }],
+        security: [{ JWTAuth: [] }], 
     },
     apis: ['./routes/*.js'], // All route files will be scanned
 };
