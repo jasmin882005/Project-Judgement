@@ -10,22 +10,22 @@ const options = {
         },
         servers: [
             {
-                url: 'https://localhost:5000',
-                description: 'Local server (HTTPS)',
+                url: 'https://project-judgement.onrender.com',  
+                description: 'Render Deployed Server',
             },
         ],
         components: {
             securitySchemes: {
-                JWTAuth: {  
+                JWTAuth: {
                     type: 'http',
                     scheme: 'bearer',
                     bearerFormat: 'JWT',
                 },
             },
         },
-        security: [{ JWTAuth: [] }], 
+        security: [{ JWTAuth: [] }],
     },
-    apis: ['./routes/*.js'], // All route files will be scanned
+    apis: ['./routes/*.js'],
 };
 
 const specs = swaggerJsdoc(options);
