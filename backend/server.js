@@ -67,94 +67,75 @@ app.get('/', (req, res) => {
         <title>Project Judgement API</title>
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
         <style>
-            * {
-                box-sizing: border-box;
-                margin: 0;
-                padding: 0;
-            }
-
             body {
-                height: 100vh;
+                margin: 0;
                 font-family: 'Poppins', sans-serif;
-                background: radial-gradient(circle at top, #0f2027, #203a43, #2c5364);
+                background: linear-gradient(145deg, #0f2027, #203a43, #2c5364);
+                height: 100vh;
+                color: #fff;
                 display: flex;
+                flex-direction: column;
                 justify-content: center;
                 align-items: center;
-                color: #ffffff;
-                overflow: hidden;
-            }
-
-            .card {
-                background: rgba(255, 255, 255, 0.05);
-                padding: 3rem 2.5rem;
-                border-radius: 20px;
-                box-shadow: 0 0 20px rgba(0, 191, 255, 0.3);
-                backdrop-filter: blur(12px);
-                border: 1px solid rgba(0, 191, 255, 0.25);
                 text-align: center;
-                animation: fadeIn 1.2s ease;
-                max-width: 90%;
+                animation: fadeIn 1s ease-in;
             }
 
-            .card h1 {
-                font-size: 2.6rem;
-                margin-bottom: 1rem;
-                background: linear-gradient(90deg, #00bfff, #1e90ff);
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
+            h1 {
+                font-size: 2.8rem;
+                margin-bottom: 10px;
             }
 
-            .card p {
-                font-size: 1.15rem;
-                margin-bottom: 2rem;
-                color: #e0f7fa;
+            p {
+                font-size: 1.1rem;
+                margin-bottom: 30px;
             }
 
-            .button {
-                padding: 12px 28px;
+            a.button {
+                padding: 12px 25px;
                 font-size: 1rem;
                 font-weight: 600;
-                border-radius: 15px;
+                border-radius: 12px;
                 color: #00bfff;
-                background: transparent;
-                border: 2px solid #00bfff;
+                background: rgba(255, 255, 255, 0.08);
+                border: 1px solid #00bfff;
                 text-decoration: none;
-                transition: all 0.3s ease;
                 backdrop-filter: blur(10px);
+                transition: all 0.3s ease;
             }
 
-            .button:hover {
+            a.button:hover {
                 background-color: #00bfff;
                 color: #001f3f;
-                box-shadow: 0 8px 24px rgba(0,191,255,0.3);
-                transform: translateY(-3px);
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(0,191,255,0.3);
             }
 
             .footer {
-                margin-top: 2rem;
-                font-size: 0.85rem;
-                color: #aaa;
+                position: absolute;
+                bottom: 20px;
+                font-size: 0.9rem;
+                opacity: 0.8;
             }
 
             @keyframes fadeIn {
-                from { opacity: 0; transform: scale(0.95); }
-                to { opacity: 1; transform: scale(1); }
+                from { opacity: 0; transform: translateY(20px); }
+                to { opacity: 1; transform: translateY(0); }
             }
 
             @media (max-width: 600px) {
-                .card h1 { font-size: 2rem; }
-                .card p { font-size: 1rem; }
-                .button { padding: 10px 20px; font-size: 0.9rem; }
+                h1 { font-size: 2rem; }
+                p { font-size: 1rem; }
+                a.button { padding: 10px 20px; font-size: 0.9rem; }
             }
         </style>
     </head>
     <body>
-        <div class="card">
-            <h1>Project Judgement API is Live</h1>
-            <p>Welcome to the backend service. View full documentation below:</p>
-            <a class="button" href="/api-docs" target="_blank">View API Docs (Swagger UI)</a>
-            <div class="footer">Version: 1.0.0 | Build: 22 July 2025</div>
-        </div>
+        <h1>Project Judgement API is Live</h1>
+        <p>Welcome to the backend service. View full documentation below:</p>
+        <a class="button" href="/api-docs" target="_blank">View API Docs (Swagger UI)</a>
+
+        <div class="footer">Version: 1.0.0 | Build: 22 July 2025</div>
     </body>
     </html>
   `);
