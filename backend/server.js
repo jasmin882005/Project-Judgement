@@ -62,28 +62,51 @@ app.get('/', (req, res) => {
     <!DOCTYPE html>
     <html lang="en">
     <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Project Judgement API</title>
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-CJ9mVYovZ9TXjPZfGCVyEvh5sKrLoEZV2Jr7w3Y7VvFpg+xke7YF3w0BevWxeFjIvYDAkUEFqRj9HoLz2OkaFg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
         <style>
-            body {
+            html, body {
                 margin: 0;
+                padding: 0;
+                width: 100%;
+                height: 100%;
                 font-family: 'Poppins', sans-serif;
+                overflow: hidden;
+            }
+
+            #particles-js {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                z-index: -1;
                 background: linear-gradient(145deg, #0f2027, #203a43, #2c5364);
-                height: 100vh;
-                color: #fff;
+            }
+
+            .container {
+                position: relative;
+                z-index: 10;
+                height: 100%;
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
                 align-items: center;
+                color: white;
                 text-align: center;
                 animation: fadeIn 1s ease-in;
             }
 
             h1 {
-                font-size: 2.8rem;
+                font-size: 2.6rem;
                 margin-bottom: 10px;
+            }
+
+            h1 i {
+                margin-right: 10px;
+                color: #00bfff;
+                animation: float 2s ease-in-out infinite;
             }
 
             p {
@@ -102,6 +125,9 @@ app.get('/', (req, res) => {
                 text-decoration: none;
                 backdrop-filter: blur(10px);
                 transition: all 0.3s ease;
+                display: inline-flex;
+                align-items: center;
+                gap: 10px;
             }
 
             a.button:hover {
@@ -115,7 +141,23 @@ app.get('/', (req, res) => {
                 position: absolute;
                 bottom: 20px;
                 font-size: 0.9rem;
-                opacity: 0.8;
+                color: #ccc;
+            }
+
+            .footer i {
+                margin-right: 6px;
+                color: #00bfff;
+                animation: rotate 3s linear infinite;
+            }
+
+            @keyframes float {
+              0%, 100% { transform: translateY(0); }
+              50% { transform: translateY(-5px); }
+            }
+
+            @keyframes rotate {
+              0% { transform: rotate(0deg); }
+              100% { transform: rotate(360deg); }
             }
 
             @keyframes fadeIn {
@@ -131,11 +173,44 @@ app.get('/', (req, res) => {
         </style>
     </head>
     <body>
-        <h1>Project Judgement API is Live</h1>
-        <p>Welcome to the backend service. View full documentation below:</p>
-        <a class="button" href="/api-docs" target="_blank">View API Docs (Swagger UI)</a>
+        <div id="particles-js"></div>
 
-        <div class="footer">Version: 1.0.0 | Build: 22 July 2025</div>
+        <div class="container">
+            <h1><i class="fas fa-rocket"></i>Project Judgement API is Live</h1>
+            <p>Welcome to the backend service. View full documentation below:</p>
+            <a class="button" href="/api-docs" target="_blank">
+                <i class="fas fa-file-alt"></i> View API Docs (Swagger UI)
+            </a>
+            <div class="footer"><i class="fas fa-tools"></i>Version: 1.0.0 | Build: 22 July 2025</div>
+        </div>
+
+        <!-- Particle Script -->
+        <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+        <script>
+          particlesJS("particles-js", {
+            particles: {
+              number: { value: 60, density: { enable: true, value_area: 800 } },
+              color: { value: "#00bfff" },
+              shape: { type: "circle" },
+              opacity: { value: 0.5 },
+              size: { value: 3, random: true },
+              line_linked: { enable: true, distance: 150, color: "#00bfff", opacity: 0.4, width: 1 },
+              move: { enable: true, speed: 2, direction: "none", out_mode: "out" }
+            },
+            interactivity: {
+              events: {
+                onhover: { enable: true, mode: "repulse" },
+                onclick: { enable: true, mode: "push" },
+                resize: true
+              },
+              modes: {
+                repulse: { distance: 100 },
+                push: { particles_nb: 4 }
+              }
+            },
+            retina_detect: true
+          });
+        </script>
     </body>
     </html>
   `);
