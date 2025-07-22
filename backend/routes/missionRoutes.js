@@ -27,7 +27,7 @@ const { Mission } = require('../models');
  *     summary: Create a new mission (admin only)
  *     tags: [Mission]
  *     security:
- *       - bearerAuth: []
+ *       - JWTAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -77,7 +77,7 @@ const { Mission } = require('../models');
  *     summary: Get all missions
  *     tags: [Mission]
  *     security:
- *       - bearerAuth: []
+ *       - JWTAuth: []
  *     responses:
  *       200:
  *         description: List of missions
@@ -92,7 +92,7 @@ const { Mission } = require('../models');
  *     summary: Get a mission by ID
  *     tags: [Mission]
  *     security:
- *       - bearerAuth: []
+ *       - JWTAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -113,7 +113,7 @@ const { Mission } = require('../models');
  *     summary: Update a mission (admin only)
  *     tags: [Mission]
  *     security:
- *       - bearerAuth: []
+ *       - JWTAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -160,7 +160,7 @@ const { Mission } = require('../models');
  *     summary: Delete a mission by ID (admin only)
  *     tags: [Mission]
  *     security:
- *       - bearerAuth: []
+ *       - JWTAuth: []
  *     parameters:
  *       - in: path
  *         name: id
