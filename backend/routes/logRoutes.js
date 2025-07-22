@@ -18,7 +18,7 @@ const roleCheck = require('../middlewares/roleCheck');
  *     summary: Create a new log entry
  *     tags: [Logs]
  *     security:
- *       - bearerAuth: []
+ *       - JWTAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -51,7 +51,7 @@ const roleCheck = require('../middlewares/roleCheck');
  *     summary: Get all log entries (admin/operator only)
  *     tags: [Logs]
  *     security:
- *       - bearerAuth: []
+ *       - JWTAuth: []
  *     responses:
  *       200:
  *         description: List of logs
