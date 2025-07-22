@@ -62,21 +62,37 @@ app.get('/', (req, res) => {
     <!DOCTYPE html>
     <html lang="en">
     <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Project Judgement API</title>
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
         <style>
-            body {
+            body, html {
                 margin: 0;
+                padding: 0;
+                width: 100%;
+                height: 100%;
                 font-family: 'Poppins', sans-serif;
+                overflow: hidden;
+            }
+
+            #particles-js {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                z-index: -1;
                 background: linear-gradient(145deg, #0f2027, #203a43, #2c5364);
-                height: 100vh;
-                color: #fff;
+            }
+
+            .container {
+                position: relative;
+                z-index: 10;
+                height: 100%;
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
                 align-items: center;
+                color: white;
                 text-align: center;
                 animation: fadeIn 1s ease-in;
             }
@@ -115,7 +131,7 @@ app.get('/', (req, res) => {
                 position: absolute;
                 bottom: 20px;
                 font-size: 0.9rem;
-                opacity: 0.8;
+                color: #ccc;
             }
 
             @keyframes fadeIn {
@@ -131,15 +147,73 @@ app.get('/', (req, res) => {
         </style>
     </head>
     <body>
-        <h1>Project Judgement API is Live</h1>
-        <p>Welcome to the backend service. View full documentation below:</p>
-        <a class="button" href="/api-docs" target="_blank">View API Docs (Swagger UI)</a>
+        <div id="particles-js"></div>
 
-        <div class="footer">Version: 1.0.0 | Build: 22 July 2025</div>
+        <div class="container">
+            <h1>Project Judgement API is Live</h1>
+            <p>Welcome to the backend service. View full documentation below:</p>
+            <a class="button" href="/api-docs" target="_blank">View API Docs (Swagger UI)</a>
+            <div class="footer">Version: 1.0.0 | Build: 22 July 2025</div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+        <script>
+          particlesJS("particles-js", {
+            particles: {
+              number: { value: 60, density: { enable: true, value_area: 800 } },
+              color: { value: "#00bfff" },
+              shape: {
+                type: "circle",
+                stroke: { width: 0, color: "#000000" },
+                polygon: { nb_sides: 5 }
+              },
+              opacity: {
+                value: 0.5,
+                random: false,
+                anim: { enable: false }
+              },
+              size: {
+                value: 3,
+                random: true,
+                anim: { enable: false }
+              },
+              line_linked: {
+                enable: true,
+                distance: 150,
+                color: "#00bfff",
+                opacity: 0.4,
+                width: 1
+              },
+              move: {
+                enable: true,
+                speed: 2,
+                direction: "none",
+                random: false,
+                straight: false,
+                out_mode: "out",
+                bounce: false
+              }
+            },
+            interactivity: {
+              detect_on: "canvas",
+              events: {
+                onhover: { enable: true, mode: "repulse" },
+                onclick: { enable: true, mode: "push" },
+                resize: true
+              },
+              modes: {
+                repulse: { distance: 100, duration: 0.4 },
+                push: { particles_nb: 4 }
+              }
+            },
+            retina_detect: true
+          });
+        </script>
     </body>
     </html>
   `);
 });
+
 
 
 // Routes
