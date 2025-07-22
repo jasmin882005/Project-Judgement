@@ -8,6 +8,10 @@ const Drone = sequelize.define('Drone', {
     allowNull: false,
     unique: true,
   },
+  model: {
+  type: DataTypes.STRING,
+  allowNull: true,
+   },
   status: {
     type: DataTypes.STRING, // e.g. active, idle, offline
     allowNull: false,
