@@ -12,7 +12,7 @@
  *     summary: Add a new drone (admin only)
  *     tags: [Drone]
  *     security:
- *       - bearerAuth: []
+ *       - JWTAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -57,7 +57,7 @@
  *     summary: Get list of all drones (admin or operator)
  *     tags: [Drone]
  *     security:
- *       - bearerAuth: []
+ *      - JWTAuth: []
  *     responses:
  *       200:
  *         description: List of drones
