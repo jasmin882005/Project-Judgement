@@ -112,7 +112,7 @@ const { Drone } = require('../models');
  *                 example: active
  *               model:
  *                 type: string
- *               location:
+ *               gps_location:
  *                 type: string
  *     responses:
  *       200:
