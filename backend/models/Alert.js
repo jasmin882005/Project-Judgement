@@ -14,7 +14,11 @@ const Alert = sequelize.define('Alert', {
   timestamp: DataTypes.DATE,
 
   // ID of the drone that sent the alert
-  droneId: DataTypes.STRING
+  droneId: DataTypes.STRING,
+  resolved: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false  
+  }
 });
 
 // Export the model for use in controllers and other parts of the app
