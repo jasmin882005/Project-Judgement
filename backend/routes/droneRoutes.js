@@ -77,6 +77,92 @@
  *         description: Server error
  */
 
+/**
+ * @swagger
+ * /api/v1/drones/{id}:
+ *   put:
+ *     summary: Update an existing drone by ID (admin only)
+ *     tags: [Drone]
+ *     security:
+ *       - JWTAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID of the drone to update
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               status:
+ *                 type: string
+ *                 example: active
+ *               model:
+ *                 type: string
+ *               location:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Drone updated successfully
+ *       404:
+ *         description: Drone not found
+ */
+router.put('/:id', verifyToken, roleCheck('admin'), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updated = await Drone.update(req.body, { where: { id } });
+
+    if (!updated[0])
+      return res.status(404).json({ error: 'Drone not found' });
+
+    res.json({ message: 'Drone updated successfully' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to update drone' });
+  }
+});
+
+/**
+ * @swagger
+ * /api/v1/drones/{id}:
+ *   delete:
+ *     summary: Delete a drone by ID (admin only)
+ *     tags: [Drone]
+ *     security:
+ *       - JWTAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID of the drone to delete
+ *     responses:
+ *       200:
+ *         description: Drone deleted successfully
+ *       404:
+ *         description: Drone not found
+ */
+router.delete('/:id', verifyToken, roleCheck('admin'), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deleted = await Drone.destroy({ where: { id } });
+
+    if (!deleted)
+      return res.status(404).json({ error: 'Drone not found' });
+
+    res.json({ message: 'Drone deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to delete drone' });
+  }
+});
+
 
 const express = require('express');
 const router = express.Router();
