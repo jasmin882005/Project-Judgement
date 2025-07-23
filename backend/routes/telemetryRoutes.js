@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { body, validationResult } = require('express-validator');
 
-const { receiveTelemetry, getLatestTelemetry } = require('../controllers/telemetryController');
+const { receiveTelemetry } = require('../controllers/telemetryController');
 const verifyToken = require('../middlewares/verifyToken');
 const roleCheck = require('../middlewares/roleCheck');
 const { Telemetry } = require('../models');
