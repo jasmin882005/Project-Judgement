@@ -7,7 +7,7 @@
 
 const express = require('express');
 const router = express.Router();
-const { createLog, getLogs } = require('../controllers/logController');
+const { createLog } = require('../controllers/logController');
 const verifyToken = require('../middlewares/verifyToken');
 const roleCheck = require('../middlewares/roleCheck');
 const { Log } = require('../models');
@@ -46,23 +46,7 @@ const { Op } = require('sequelize');
  *         description: Unauthorized
  */
 router.post('/', verifyToken, createLog);
-/**
- * @swagger
- * /api/v1/logs:
- *   get:
- *     summary: Get all log entries (admin only)
- *     tags: [Logs]
- *     security:
- *       - JWTAuth: []
- *     responses:
- *       200:
- *         description: List of logs
- *       403:
- *         description: Forbidden
- *       401:
- *         description: Unauthorized
- */
-router.get('/', verifyToken, roleCheck('admin'), getLogs);
+
 /**
  * @swagger
  * /api/v1/logs:
@@ -125,6 +109,7 @@ router.get('/', verifyToken, roleCheck('admin'), async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch logs' });
   }
 });
+
 
 
 module.exports = router;
