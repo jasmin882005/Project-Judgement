@@ -87,7 +87,7 @@ router.post('/', verifyToken, telemetryValidation, async (req, res) => {
  * @swagger
  * /api/v1/telemetry/all:
  *   get:
- *     summary: Get all telemetry records
+ *     summary: Get all telemetry records (admin only)
  *     tags: [Telemetry]
  *     security:
  *       - JWTAuth: []
@@ -114,7 +114,7 @@ router.get('/all', verifyToken, roleCheck('admin'), async (req, res) => {
  * @swagger
  * /api/v1/telemetry/drone-ids:
  *   get:
- *     summary: Get all unique drone IDs
+ *     summary: Get all unique drone IDs (admin only)
  *     tags: [Telemetry]
  *     security:
  *       - JWTAuth: []
@@ -138,7 +138,7 @@ router.get('/drone-ids', verifyToken, roleCheck('admin'), async (req, res) => {
  * @swagger
  * /api/v1/telemetry/{droneId}:
  *   get:
- *     summary: Get latest telemetry record for a specific drone
+ *     summary: Get latest telemetry record for a specific drone (admin only)
  *     tags: [Telemetry]
  *     security:
  *       - JWTAuth: []
