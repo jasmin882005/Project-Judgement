@@ -44,7 +44,7 @@
  * @swagger
  * /api/v1/commands/{droneId}:
  *   get:
- *     summary: Get all commands for a specific drone (admin only)
+ *     summary: Get all commands for a specific drone 
  *     tags: [Command]
  *     security:
  *       - JWTAuth: []
@@ -76,7 +76,7 @@ const roleCheck = require("../middlewares/roleCheck"); // Add role check
 // Only admin can send drone commands
 router.post("/", verifyToken, roleCheck('admin'), sendCommand);
 
-// Get all commands for a drone (admin only)
-router.get("/:droneId", verifyToken, roleCheck('admin'), getCommandsByDrone);
+// Get all commands for a drone 
+router.get("/:droneId", verifyToken, roleCheck('admin','operator'), getCommandsByDrone);
 
 module.exports = router;
