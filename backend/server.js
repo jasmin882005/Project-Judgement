@@ -73,7 +73,7 @@ app.get('/', (req, res) => {
             margin: 0;
             padding: 0;
             font-family: 'Poppins', sans-serif;
-            background: url('https://images.unsplash.com/photo-1600161287551-0d0635022f06?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') no-repeat center center fixed;
+            background: url('https://images.unsplash.com/photo-1600161287551-0d0635022f06?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D.jpg') no-repeat center center fixed;
             background-size: cover;
             height: 100vh;
             color: #F8F8F8;
