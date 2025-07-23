@@ -10,6 +10,8 @@ const router = express.Router();
 const { createLog, getLogs } = require('../controllers/logController');
 const verifyToken = require('../middlewares/verifyToken');
 const roleCheck = require('../middlewares/roleCheck');
+const { Log } = require('../models');
+const { Op } = require('sequelize');
 
 /**
  * @swagger
@@ -43,7 +45,7 @@ const roleCheck = require('../middlewares/roleCheck');
  *       401:
  *         description: Unauthorized
  */
-
+router.post('/', verifyToken, createLog);
 /**
  * @swagger
  * /api/v1/logs:
@@ -60,7 +62,7 @@ const roleCheck = require('../middlewares/roleCheck');
  *       401:
  *         description: Unauthorized
  */
-
+router.get('/', verifyToken, roleCheck('admin'), getLogs);
 /**
  * @swagger
  * /api/v1/logs:
@@ -124,8 +126,5 @@ router.get('/', verifyToken, roleCheck('admin'), async (req, res) => {
   }
 });
 
-
-router.post('/', verifyToken, createLog);
-router.get('/', verifyToken, roleCheck('admin'), getLogs);
 
 module.exports = router;
