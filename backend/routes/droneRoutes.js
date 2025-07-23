@@ -9,6 +9,7 @@ const router = express.Router();
 const verifyToken = require('../middlewares/verifyToken');
 const roleCheck = require('../middlewares/roleCheck');
 const { createDrone, getDroneStatus, getAllDrones } = require('../controllers/droneController');
+const { Drone } = require('../models'); 
 
 /**
  * @swagger
