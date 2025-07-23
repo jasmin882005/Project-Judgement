@@ -59,10 +59,11 @@ app.use(performanceLogger);
 //Project Judgement API is Live
 app.get('/', (req, res) => {
   res.send(`
-   <!DOCTYPE html>
-   <html lang="en">
-   <head>
-    <meta charset="UTF-8">
+      <!DOCTYPE html>
+      <html lang="en">
+
+      <head>
+       <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Project Judgement API</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
@@ -73,8 +74,9 @@ app.get('/', (req, res) => {
             margin: 0;
             padding: 0;
             font-family: 'Poppins', sans-serif;
-            background: url('https://github.com/jasmin882005/image/blob/main/Drone.avif') no-repeat center center fixed;
-            background-size: cover;
+            background: #360033;
+            background: -webkit-linear-gradient(to right, #0b8793, #360033);
+            background: linear-gradient(to right, #0b8793, #360033);
             height: 100vh;
             color: #F8F8F8;
             display: flex;
@@ -123,7 +125,7 @@ app.get('/', (req, res) => {
             border-radius: 12px;
             color: #EEEEEE;
             background: transparent;
-            box-shadow: 0 5px 15px rgb(216, 217, 218, 0.1);
+            box-shadow: 0 5px 15px rgb(72, 166, 167,0.1);
             border: 1px solid #EEEEEE;
             text-decoration: none;
             backdrop-filter: blur(10px);
@@ -131,11 +133,11 @@ app.get('/', (req, res) => {
         }
 
         a.button:hover {
-            background-color: #7F8487;
-            border-color: #151515;
-            color: #151515;
+            background-color: #034C53;
+            border-color: #360033;
+            color: #360033;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgb(238, 238, 238, 0.3);
+            box-shadow: 0 5px 15px rgb(72, 166, 167,0.3);
         }
 
         .footer {
@@ -159,6 +161,8 @@ app.get('/', (req, res) => {
                 font-size: 0.9rem;
             }
         }
+        
+         
     </style>
 </head>
 
@@ -170,7 +174,9 @@ app.get('/', (req, res) => {
         <a class="button" href="/api-docs" target="_blank">
             <i class="fas fa-file-code fa-xl" style="margin-right: 10px;"></i>View API Docs
         </a>
-        <a class="button" href="https://github.com/jasmin882005/Project-Judgement/tree/backend-code-submission-jasmin/backend" target="_blank">
+        <a class="button"
+            href="https://github.com/jasmin882005/Project-Judgement/tree/backend-code-submission-jasmin/backend"
+            target="_blank">
             <i class="fab fa-github fa-xl" style="margin-right: 10px;"></i>GitHub Repo
         </a>
     </div>
@@ -181,7 +187,6 @@ app.get('/', (req, res) => {
 </html>
   `);
 });
-
 
 
 // Routes
