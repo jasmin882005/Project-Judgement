@@ -59,11 +59,11 @@ app.use(performanceLogger);
 //Project Judgement API is Live
 app.get('/', (req, res) => {
   res.send(`
-      <!DOCTYPE html>
-      <html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 
-      <head>
-       <meta charset="UTF-8">
+<head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Project Judgement API</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
@@ -125,7 +125,7 @@ app.get('/', (req, res) => {
             border-radius: 12px;
             color: #EEEEEE;
             background: transparent;
-            box-shadow: 0 5px 15px rgb(72, 166, 167,0.1);
+            box-shadow: 0 5px 15px rgb(72, 166, 167, 0.1);
             border: 1px solid #EEEEEE;
             text-decoration: none;
             backdrop-filter: blur(10px);
@@ -137,7 +137,14 @@ app.get('/', (req, res) => {
             border-color: #360033;
             color: #360033;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgb(72, 166, 167,0.3);
+            box-shadow: 0 5px 15px rgb(72, 166, 167, 0.3);
+        }
+
+        .logo {
+            width: 400px;
+            display: block;
+            margin-bottom: -3rem;
+
         }
 
         .footer {
@@ -148,6 +155,11 @@ app.get('/', (req, res) => {
         }
 
         @media (max-width: 600px) {
+            .logo {
+                width: 350px;
+                margin-bottom: -2rem;
+            }
+
             h1 {
                 font-size: 2rem;
             }
@@ -161,12 +173,11 @@ app.get('/', (req, res) => {
                 font-size: 0.9rem;
             }
         }
-        
-         
     </style>
 </head>
 
 <body>
+    <img src="/logo.png" alt="Project Judgement Logo" class="logo" />
     <h1>Project Judgement API is Live</h1>
     <p>Welcome to the backend service. View full documentation below:</p>
 
