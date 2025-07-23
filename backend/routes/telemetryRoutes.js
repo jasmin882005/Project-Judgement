@@ -3,9 +3,10 @@ const router = express.Router();
 const { body, validationResult } = require('express-validator');
 
 const { receiveTelemetry, getLatestTelemetry } = require('../controllers/telemetryController');
-const verifyToken = require('../middlewares/verifyToken');
-const roleCheck = require('../middlewares/roleCheck');
+const verifyToken = require('../middleware/verifyToken');
+const roleCheck = require('../middleware/roleCheck');
 const { Telemetry } = require('../models');
+const { fn, col } = require('sequelize');
 
 /**
  * @swagger
@@ -14,18 +15,29 @@ const { Telemetry } = require('../models');
  *     summary: Submit telemetry data
  *     tags: [Telemetry]
  *     security:
- *       - JWTAuth: []
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - droneId
+ *               - gps
+ *               - altitude
+ *               - speed
+ *               - battery
  *             properties:
  *               droneId:
  *                 type: string
  *               gps:
- *                 type: string
+ *                 type: object
+ *                 properties:
+ *                   lat:
+ *                     type: number
+ *                   lng:
+ *                     type: number
  *               altitude:
  *                 type: number
  *               speed:
@@ -39,15 +51,18 @@ const { Telemetry } = require('../models');
  *         description: Invalid input
  */
 
-// Validation middleware
+// Validation middleware for structured JSON input
 const telemetryValidation = [
   body('droneId')
     .isString().withMessage('droneId must be a string')
     .matches(/^[\w-]+$/).withMessage('droneId contains invalid characters'),
 
   body('gps')
-    .isString().withMessage('GPS must be a string')
-    .matches(/^[-0-9.,\s]+$/).withMessage('GPS must contain valid coordinates'),
+    .isObject().withMessage('gps must be a JSON object like { "lat": ..., "lng": ... }'),
+  body('gps.lat')
+    .isFloat({ min: -90, max: 90 }).withMessage('Latitude must be a valid float between -90 and 90'),
+  body('gps.lng')
+    .isFloat({ min: -180, max: 180 }).withMessage('Longitude must be a valid float between -180 and 180'),
 
   body('altitude')
     .isFloat().withMessage('Altitude must be a float'),
@@ -56,10 +71,10 @@ const telemetryValidation = [
     .isFloat().withMessage('Speed must be a float'),
 
   body('battery')
-    .isFloat().withMessage('Battery must be a float')
+    .isFloat({ min: 0, max: 100 }).withMessage('Battery must be a float between 0 and 100')
 ];
 
-// POST: Any authenticated user (admin/operator) can send telemetry
+// POST: Save telemetry
 router.post('/', verifyToken, telemetryValidation, async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -75,7 +90,7 @@ router.post('/', verifyToken, telemetryValidation, async (req, res) => {
  *     summary: Get latest telemetry data for a drone
  *     tags: [Telemetry]
  *     security:
- *       - JWTAuth: []
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: droneId
@@ -98,7 +113,7 @@ router.get('/latest/:droneId', verifyToken, roleCheck('admin'), getLatestTelemet
  *     summary: Get all unique drone IDs
  *     tags: [Telemetry]
  *     security:
- *       - JWTAuth: []
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: List of unique drone IDs
@@ -106,9 +121,7 @@ router.get('/latest/:droneId', verifyToken, roleCheck('admin'), getLatestTelemet
 router.get('/drone-ids', verifyToken, roleCheck('admin'), async (req, res) => {
   try {
     const droneIds = await Telemetry.findAll({
-      attributes: [
-        [require('sequelize').fn('DISTINCT', require('sequelize').col('droneId')), 'droneId']
-      ],
+      attributes: [[fn('DISTINCT', col('droneId')), 'droneId']],
       raw: true
     });
     res.json(droneIds.map(d => d.droneId));
@@ -124,7 +137,7 @@ router.get('/drone-ids', verifyToken, roleCheck('admin'), async (req, res) => {
  *     summary: Get latest telemetry record for a specific drone
  *     tags: [Telemetry]
  *     security:
- *       - JWTAuth: []
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: droneId
