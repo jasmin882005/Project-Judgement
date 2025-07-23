@@ -104,7 +104,7 @@ router.get('/', verifyToken, getAlerts);
  *       500:
  *         description: Server error
  */
-router.put('/:id', verifyToken, async (req, res) => {
+router.put('/:id', verifyToken, roleCheck('admin'), async (req, res) => {
   try {
     const id = req.params.id;
     const updated = await Alert.update(req.body, { where: { id } });
@@ -117,6 +117,60 @@ router.put('/:id', verifyToken, async (req, res) => {
     res.status(500).json({ error: 'Failed to update alert' });
   }
 });
+
+/**
+ * @swagger
+ * /api/v1/alerts/{id}/resolve:
+ *   put:
+ *     summary: Mark an alert as resolved
+ *     tags: [Alert]
+ *     security:
+ *       - JWTAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Alert ID to mark as resolved
+ *     requestBody:
+ *       required: false
+ *     responses:
+ *       200:
+ *         description: Alert marked as resolved
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: Alert resolved
+ *       404:
+ *         description: Alert not found
+ *         content:
+ *           application/json:
+ *             example:
+ *               error: Alert not found
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             example:
+ *               error: Failed to update alert
+ */
+router.put('/:id/resolve', verifyToken, roleCheck('admin'), async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    const alert = await Alert.findByPk(id);
+    if (!alert) return res.status(404).json({ error: 'Alert not found' });
+
+    alert.resolved = true;
+    await alert.save();
+
+    res.json({ message: 'Alert marked as resolved', alert });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to update alert' });
+  }
+});
+
 
 router.post('/', verifyToken, createAlert);
 router.get('/', verifyToken, getAlerts);
