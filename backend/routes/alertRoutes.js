@@ -9,6 +9,7 @@ const express = require('express');
 const router = express.Router();
 const { createAlert, getAlerts } = require('../controllers/alertController');
 const verifyToken = require('../middlewares/verifyToken');
+const roleCheck = require('../middlewares/roleCheck');
 const { Alert } = require('../models'); // For PUT route
 
 /**
