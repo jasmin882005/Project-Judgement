@@ -48,7 +48,7 @@ const roleCheck = require('../middlewares/roleCheck');
  * @swagger
  * /api/v1/logs:
  *   get:
- *     summary: Get all log entries (admin/operator only)
+ *     summary: Get all log entries (admin only)
  *     tags: [Logs]
  *     security:
  *       - JWTAuth: []
