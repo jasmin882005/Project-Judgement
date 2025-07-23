@@ -58,7 +58,7 @@ router.post('/', verifyToken, createAlert);
  * @swagger
  * /api/v1/alerts:
  *   get:
- *     summary: Get all alerts (admin/operator)
+ *     summary: Get all alerts 
  *     tags: [Alert]
  *     security:
  *       - JWTAuth: []
