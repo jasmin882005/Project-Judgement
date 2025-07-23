@@ -4,7 +4,12 @@
  *   name: Command
  *   description: API to send commands to drones
  */
+const express = require("express");
+const router = express.Router();
 
+const { sendCommand, getCommandsByDrone } = require("../controllers/commandController");
+const verifyToken = require("../middlewares/verifyToken");
+const roleCheck = require("../middlewares/roleCheck"); // Add role check
 /**
  * @swagger
  * /api/v1/commands:
@@ -169,13 +174,6 @@ router.delete('/:id', verifyToken, roleCheck('admin'), async (req, res) => {
     res.status(500).json({ error: 'Failed to delete command' });
   }
 });
-
-const express = require("express");
-const router = express.Router();
-
-const { sendCommand, getCommandsByDrone } = require("../controllers/commandController");
-const verifyToken = require("../middlewares/verifyToken");
-const roleCheck = require("../middlewares/roleCheck"); // Add role check
 
 // Only admin can send drone commands
 router.post("/", verifyToken, roleCheck('admin'), sendCommand);
