@@ -66,6 +66,110 @@
  *         description: Server error
  */
 
+/**
+ * @swagger
+ * /api/v1/commands:
+ *   get:
+ *     summary: Get all commands
+ *     tags: [Command]
+ *     security:
+ *       - JWTAuth: []
+ *     responses:
+ *       200:
+ *         description: List of commands
+ */
+router.get('/', verifyToken, roleCheck('admin'), async (req, res) => {
+  try {
+    const commands = await Command.findAll({ order: [['createdAt', 'DESC']] });
+    res.json(commands);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch commands' });
+  }
+});
+
+/**
+ * @swagger
+ * /api/v1/commands/{id}:
+ *   put:
+ *     summary: Update a command by ID (admin only)
+ *     tags: [Command]
+ *     security:
+ *       - JWTAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id 
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID of the command to update
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               action:
+ *                 type: string
+ *               droneId:
+ *                 type: string
+ *               parameters:
+ *                 type: object
+ *     responses:
+ *       200:
+ *         description: Command updated successfully
+ *       404:
+ *         description: Command not found
+ */
+router.put('/:id', verifyToken, roleCheck('admin'), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updated = await Command.update(req.body, { where: { id } });
+
+    if (!updated[0])
+      return res.status(404).json({ error: 'Command not found' });
+
+    res.json({ message: 'Command updated successfully' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to update command' });
+  }
+});
+
+/**
+ * @swagger
+ * /api/v1/commands/{id}:
+ *   delete:
+ *     summary: Delete a command by ID (admin only)
+ *     tags: [Command]
+ *     security:
+ *       - JWTAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID of the command to delete
+ *     responses:
+ *       200:
+ *         description: Command deleted successfully
+ *       404:
+ *         description: Command not found
+ */
+router.delete('/:id', verifyToken, roleCheck('admin'), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deleted = await Command.destroy({ where: { id } });
+
+    if (!deleted)
+      return res.status(404).json({ error: 'Command not found' });
+
+    res.json({ message: 'Command deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to delete command' });
+  }
+});
+
 const express = require("express");
 const router = express.Router();
 
