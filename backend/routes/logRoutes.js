@@ -61,6 +61,70 @@ const roleCheck = require('../middlewares/roleCheck');
  *         description: Unauthorized
  */
 
+/**
+ * @swagger
+ * /api/v1/logs:
+ *   get:
+ *     summary: Get filtered log entries (admin only)
+ *     tags: [Logs]
+ *     security:
+ *       - JWTAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: droneId
+ *         schema:
+ *           type: string
+ *         description: Filter logs by drone ID
+ *       - in: query
+ *         name: event
+ *         schema:
+ *           type: string
+ *         description: Filter logs by event keyword
+ *       - in: query
+ *         name: from
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Start date (YYYY-MM-DD)
+ *       - in: query
+ *         name: to
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: End date (YYYY-MM-DD)
+ *     responses:
+ *       200:
+ *         description: Filtered list of logs
+ *       403:
+ *         description: Forbidden
+ *       401:
+ *         description: Unauthorized
+ */
+router.get('/', verifyToken, roleCheck('admin'), async (req, res) => {
+  try {
+    const { droneId, event, from, to } = req.query;
+    const where = {};
+
+    if (droneId) where.droneId = droneId;
+    if (event) where.event = { [Op.iLike]: `%${event}%` };
+    if (from || to) {
+      where.createdAt = {};
+      if (from) where.createdAt[Op.gte] = new Date(from);
+      if (to) where.createdAt[Op.lte] = new Date(to);
+    }
+
+    const logs = await Log.findAll({
+      where,
+      order: [['createdAt', 'DESC']],
+    });
+
+    res.json(logs);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch logs' });
+  }
+});
+
+
 router.post('/', verifyToken, createLog);
 router.get('/', verifyToken, roleCheck('admin'), getLogs);
 
