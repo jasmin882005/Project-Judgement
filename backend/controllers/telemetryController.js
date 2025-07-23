@@ -19,6 +19,7 @@ exports.receiveTelemetry = async (req, res) => {
 
     res.status(201).json(entry);
   } catch (error) {
+    console.error("Telemetry POST error:", error);
     res.status(500).json({ error: 'Failed to save telemetry data' });
   }
 };
