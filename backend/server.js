@@ -177,7 +177,7 @@ app.get('/', (req, res) => {
 </head>
 
 <body>
-    <img src="/logo.png" alt="Project Judgement Logo" class="logo" />
+    <img src="logo.png" alt="Project Judgement Logo" class="logo" />
     <h1>Project Judgement API is Live</h1>
     <p>Welcome to the backend service. View full documentation below:</p>
 
