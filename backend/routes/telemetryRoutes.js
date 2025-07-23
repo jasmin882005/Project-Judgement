@@ -85,26 +85,30 @@ router.post('/', verifyToken, telemetryValidation, async (req, res) => {
 
 /**
  * @swagger
- * /api/v1/telemetry/latest/{droneId}:
+ * /api/v1/telemetry/all:
  *   get:
- *     summary: Get latest telemetry data for a drone
+ *     summary: Get all telemetry records
  *     tags: [Telemetry]
  *     security:
  *       - JWTAuth: []
- *     parameters:
- *       - in: path
- *         name: droneId
- *         required: true
- *         schema:
- *           type: string
- *         description: ID of the drone
  *     responses:
  *       200:
- *         description: Telemetry data found
- *       404:
- *         description: No telemetry found for this drone
+ *         description: All telemetry records fetched
+ *       500:
+ *         description: Failed to fetch telemetry data
  */
-router.get('/latest/:droneId', verifyToken, roleCheck('admin'), getLatestTelemetry);
+router.get('/all', verifyToken, roleCheck('admin'), async (req, res) => {
+  try {
+    const records = await Telemetry.findAll({
+      order: [['createdAt', 'DESC']]
+    });
+
+    res.json(records);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch telemetry records' });
+  }
+});
+
 
 /**
  * @swagger
