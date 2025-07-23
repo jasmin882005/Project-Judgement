@@ -59,97 +59,126 @@ app.use(performanceLogger);
 //Project Judgement API is Live
 app.get('/', (req, res) => {
   res.send(`
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Project Judgement API</title>
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-        <style>
-            body {
-                margin: 0;
-                font-family: 'Poppins', sans-serif;
-                background: linear-gradient(145deg, #0f2027, #203a43, #2c5364);
-                height: 100vh;
-                color: #fff;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                text-align: center;
-                animation: fadeIn 1s ease-in;
-            }
+   <!DOCTYPE html>
+   <html lang="en">
+   <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Judgement API</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: url('https://images.unsplash.com/photo-1600161287551-0d0635022f06?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') no-repeat center center fixed;
+            background-size: cover;
+            height: 100vh;
+            color: #F8F8F8;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: -1;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            animation: fadeIn 1s ease-in;
+        }
+
+        p {
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        a.button {
+            padding: 12px 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            color: #EEEEEE;
+            background: transparent;
+            box-shadow: 0 5px 15px rgb(216, 217, 218, 0.1);
+            border: 1px solid #EEEEEE;
+            text-decoration: none;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        a.button:hover {
+            background-color: #7F8487;
+            border-color: #151515;
+            color: #151515;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgb(238, 238, 238, 0.3);
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 20px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 600px) {
             h1 {
-                font-size: 2.8rem;
-                margin-bottom: 10px;
+                font-size: 2rem;
             }
 
             p {
-                font-size: 1.1rem;
-                margin-bottom: 30px;
-            }
-
-            .button-group {
-                display: flex;
-                gap: 20px;
-                flex-wrap: wrap;
-                justify-content: center;
-                margin-bottom: 30px;
+                font-size: 1rem;
             }
 
             a.button {
-                padding: 12px 25px;
-                font-size: 1rem;
-                font-weight: 600;
-                border-radius: 12px;
-                color: #00bfff;
-                background: rgba(255, 255, 255, 0.08);
-                border: 1px solid #00bfff;
-                text-decoration: none;
-                backdrop-filter: blur(10px);
-                transition: all 0.3s ease;
-            }
-
-            a.button:hover {
-                background-color: #00bfff;
-                color: #001f3f;
-                transform: translateY(-2px);
-                box-shadow: 0 5px 15px rgba(0,191,255,0.3);
-            }
-
-            .footer {
-                position: absolute;
-                bottom: 20px;
+                padding: 10px 20px;
                 font-size: 0.9rem;
-                opacity: 0.8;
             }
+        }
+    </style>
+</head>
 
-            @keyframes fadeIn {
-                from { opacity: 0; transform: translateY(20px); }
-                to { opacity: 1; transform: translateY(0); }
-            }
+<body>
+    <h1>Project Judgement API is Live</h1>
+    <p>Welcome to the backend service. View full documentation below:</p>
 
-            @media (max-width: 600px) {
-                h1 { font-size: 2rem; }
-                p { font-size: 1rem; }
-                a.button { padding: 10px 20px; font-size: 0.9rem; }
-            }
-        </style>
-    </head>
-    <body>
-        <h1>Project Judgement API is Live</h1>
-        <p>Welcome to the backend service. View full documentation below:</p>
+    <div class="button-group">
+        <a class="button" href="/api-docs" target="_blank">
+            <i class="fas fa-file-code fa-xl" style="margin-right: 10px;"></i>View API Docs
+        </a>
+        <a class="button" href="https://github.com/jasmin882005/Project-Judgement/tree/backend-code-submission-jasmin/backend" target="_blank">
+            <i class="fab fa-github fa-xl" style="margin-right: 10px;"></i>GitHub Repo
+        </a>
+    </div>
 
-        <div class="button-group">
-            <a class="button" href="/api-docs" target="_blank">View API Docs</a>
-            <a class="button" href="https://github.com/jasmin882005/Project-Judgement/tree/backend-code-submission-jasmin/backend" target="_blank">GitHub Repo</a>
-        </div>
+    <div class="footer">Version: 1.0.0 | Build: 22 July 2025</div>
+</body>
 
-        <div class="footer">Version: 1.0.0 | Build: 22 July 2025</div>
-    </body>
-    </html>
+</html>
   `);
 });
 
