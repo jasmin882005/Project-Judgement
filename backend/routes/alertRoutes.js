@@ -74,7 +74,7 @@ router.get('/', verifyToken, getAlerts);
  * @swagger
  * /api/v1/alerts/{id}:
  *   put:
- *     summary: Update an existing alert by ID
+ *     summary: Update an existing alert by ID (admin only)
  *     tags: [Alert]
  *     security:
  *       - JWTAuth: []
@@ -123,7 +123,7 @@ router.put('/:id', verifyToken, roleCheck('admin'), async (req, res) => {
  * @swagger
  * /api/v1/alerts/{id}/resolve:
  *   put:
- *     summary: Mark an alert as resolved
+ *     summary: Mark an alert as resolved (admin only)
  *     tags: [Alert]
  *     security:
  *       - JWTAuth: []
