@@ -40,6 +40,31 @@
  *       500:
  *         description: Server error
  */
+/**
+ * @swagger
+ * /api/v1/commands/{droneId}:
+ *   get:
+ *     summary: Get all commands for a specific drone (admin only)
+ *     tags: [Command]
+ *     security:
+ *       - JWTAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: droneId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the drone to fetch commands for
+ *     responses:
+ *       200:
+ *         description: List of commands for the drone
+ *       403:
+ *         description: Unauthorized or insufficient permission
+ *       404:
+ *         description: Drone or commands not found
+ *       500:
+ *         description: Server error
+ */
 
 const express = require("express");
 const router = express.Router();
