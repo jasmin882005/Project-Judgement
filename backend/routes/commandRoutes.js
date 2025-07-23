@@ -9,7 +9,7 @@ const router = express.Router();
 
 const { sendCommand, getCommandsByDrone } = require("../controllers/commandController");
 const verifyToken = require("../middlewares/verifyToken");
-const roleCheck = require("../middlewares/roleCheck');
+const roleCheck = require("../middlewares/roleCheck");
 const { Command } = require('../models'); 
 
 /**
