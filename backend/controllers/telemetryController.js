@@ -25,20 +25,3 @@ exports.receiveTelemetry = async (req, res) => {
 };
 
 
-exports.getLatestTelemetry = async (req, res) => {
-  try {
-    const { droneId } = req.params;
-
-    const latest = await Telemetry.findOne({
-      where: { droneId },
-      order: [['createdAt', 'DESC']]
-    });
-
-    if (!latest) return res.status(404).json({ error: 'No telemetry found' });
-
-    res.json(latest);
-  } catch (error) {
-    console.error('Latest telemetry error:', error);
-    res.status(500).json({ error: 'Failed to fetch latest telemetry' });
-  }
-};
