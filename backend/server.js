@@ -56,6 +56,8 @@ app.use(responseTime());
 app.use(express.json());
 app.use(performanceLogger);
 
+const path = require('path');
+app.use(express.static(path.join(__dirname)));
 //Project Judgement API is Live
 app.get('/', (req, res) => {
   res.send(`
@@ -177,7 +179,7 @@ app.get('/', (req, res) => {
 </head>
 
 <body>
-    <img src="backend/logo.png" alt="Project Judgement Logo" class="logo" />
+    <img src="logo.png" alt="Project Judgement Logo" class="logo" />
     <h1>Project Judgement API is Live</h1>
     <p>Welcome to the backend service. View full documentation below:</p>
 
