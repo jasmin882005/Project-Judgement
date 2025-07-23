@@ -20,11 +20,3 @@ exports.createLog = async (req, res) => {
   }
 };
 
-exports.getLogs = async (req, res) => {
-  try {
-    const logs = await Log.findAll({ order: [['timestamp', 'DESC']] });
-    res.json(logs);
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch logs' });
-  }
-};
