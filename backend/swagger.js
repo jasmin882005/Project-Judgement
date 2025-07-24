@@ -11,7 +11,7 @@ const options = {
     },
     servers: [
       {
-        url: 'https://project-judgement.onrender.com',  // Render base URL
+        url: 'https://project-judgement.onrender.com',
         description: 'Render Deployed Server',
       },
     ],
@@ -23,10 +23,91 @@ const options = {
           bearerFormat: 'JWT',
         },
       },
+      schemas: {
+        LogInput: {
+          type: 'object',
+          required: ['event'],
+          properties: {
+            droneId: {
+              type: 'string',
+              example: 'DRN-001',
+            },
+            event: {
+              type: 'string',
+              example: 'Battery low warning',
+            },
+            type: {
+              type: 'string',
+              enum: ['info', 'warning', 'error'],
+              example: 'warning',
+            },
+            action: {
+              type: 'string',
+              example: 'FAILED_LOGIN',
+            },
+            source: {
+              type: 'string',
+              example: 'authController',
+            },
+          },
+        },
+        LogEntry: {
+          type: 'object',
+          properties: {
+            id: {
+              type: 'integer',
+              example: 42,
+            },
+            droneId: {
+              type: 'string',
+              example: 'DRN-001',
+            },
+            event: {
+              type: 'string',
+              example: 'Battery low warning',
+            },
+            action: {
+              type: 'string',
+              example: 'FAILED_LOGIN',
+            },
+            userId: {
+              type: 'integer',
+              example: 3,
+            },
+            type: {
+              type: 'string',
+              example: 'warning',
+            },
+            createdBy: {
+              type: 'string',
+              example: 'admin@system.com',
+            },
+            source: {
+              type: 'string',
+              example: 'authController',
+            },
+            timestamp: {
+              type: 'string',
+              format: 'date-time',
+              example: '2025-07-24T12:00:00.000Z',
+            },
+            createdAt: {
+              type: 'string',
+              format: 'date-time',
+              example: '2025-07-24T12:00:00.000Z',
+            },
+            updatedAt: {
+              type: 'string',
+              format: 'date-time',
+              example: '2025-07-24T12:00:00.000Z',
+            },
+          },
+        },
+      },
     },
-    security: [{ JWTAuth: [] }], // Applies JWTAuth globally
+    security: [{ JWTAuth: [] }],
   },
-  apis: ['./routes/*.js'], // Scan all route files
+  apis: ['./routes/*.js'],
 };
 
 const specs = swaggerJsdoc(options);
