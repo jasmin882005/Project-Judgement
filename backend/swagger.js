@@ -14,6 +14,10 @@ const options = {
         url: 'https://project-judgement.onrender.com',
         description: 'Render Deployed Server',
       },
+      {
+        url: 'https://localhost:5000',
+        description: 'Local HTTPS Development Server',
+  }
     ],
     components: {
       securitySchemes: {
