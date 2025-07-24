@@ -105,24 +105,79 @@ exports.login = async (req, res) => {
 exports.refreshToken = async (req, res) => {
   const { refreshToken } = req.body;
 
-  if (!refreshToken) return res.status(401).json({ error: 'Refresh token required' });
+  if (!refreshToken) {
+    // Missing token
+    await Log.create({
+      action: 'REFRESH_FAILED',
+      event: 'Refresh token missing in request',
+      userId: null,
+      createdBy: 'unknown',
+      type: 'warning',
+      source: 'authController'
+    });
+    return res.status(401).json({ error: 'Refresh token required' });
+  }
 
   try {
     const found = await RefreshToken.findOne({ where: { token: refreshToken } });
 
-    if (!found) return res.status(403).json({ error: 'Invalid refresh token' });
+    if (!found) {
+      // Token not found in DB
+      await Log.create({
+        action: 'REFRESH_FAILED',
+        event: 'Refresh token not found in database',
+        userId: null,
+        createdBy: 'unknown',
+        type: 'warning',
+        source: 'authController'
+      });
+
+      return res.status(403).json({ error: 'Invalid refresh token' });
+    }
 
     if (new Date() > found.expiryDate) {
       await found.destroy();
+
+      // decode to get user info
+      const decoded = jwt.decode(refreshToken);
+      await Log.create({
+        action: 'REFRESH_EXPIRED',
+        event: `Expired refresh token used by ${decoded?.email || 'unknown'}`,
+        userId: decoded?.id || null,
+        createdBy: decoded?.email || 'unknown',
+        type: 'warning',
+        source: 'authController'
+      });
       return res.status(403).json({ error: 'Refresh token expired' });
     }
 
-    jwt.verify(refreshToken, process.env.REFRESH_SECRET, (err, user) => {
-      if (err) return res.status(403).json({ error: 'Token verification failed' });
+    jwt.verify(refreshToken, process.env.REFRESH_SECRET, async (err, user) => {
+      if (err) {
+        // Verification failed
+        await Log.create({
+          action: 'REFRESH_FAILED',
+          event: 'Refresh token verification failed',
+          userId: null,
+          createdBy: 'unknown',
+          type: 'warning',
+          source: 'authController'
+        });
+
+        return res.status(403).json({ error: 'Token verification failed' });
+      }
 
       const payload = { id: user.id, role: user.role, email: user.email };
       const newAccessToken = generateAccessToken(payload);
 
+      await Log.create({
+        action: 'REFRESH_SUCCESS',
+        event: `${user.email} refreshed access token`,
+        userId: user.id,
+        createdBy: user.email,
+        type: 'info',
+        source: 'authController'
+      });
+      
       res.json({ accessToken: newAccessToken });
     });
   } catch (err) {
