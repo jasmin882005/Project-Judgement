@@ -9,9 +9,13 @@ const User = sequelize.define('User', {
 
   // User's email address (must be unique)
   email: {
-    type: DataTypes.STRING,
-    unique: true, // Prevent duplicate registrations
-  },
+  type: DataTypes.STRING,
+  allowNull: false,
+  unique: true,
+  validate: {
+    isEmail: true,
+  }
+},
 
   // Hashed password (never store plain text!)
   password: DataTypes.STRING,
