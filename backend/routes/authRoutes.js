@@ -7,7 +7,7 @@
 
 const express = require('express');
 const router = express.Router();
-const { signup, login, refreshToken, logout} = require('../controllers/authController');
+const { signup, login, refreshToken, logout } = require('../controllers/authController');
 
 /**
  * @swagger
@@ -20,26 +20,7 @@ const { signup, login, refreshToken, logout} = require('../controllers/authContr
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - name
- *               - email
- *               - password
- *               - role
- *             properties:
- *               name:
- *                 type: string
- *                 example: Jasmin jamadar
- *               email:
- *                 type: string
- *                 example: jasmin@example.com
- *               password:
- *                 type: string
- *                 example: mysecurepassword
- *               role:
- *                 type: string
- *                 enum: [admin, operator]
- *                 example: operator
+ *             $ref: '#/components/schemas/SignupRequest'
  *     responses:
  *       201:
  *         description: User created successfully
@@ -58,22 +39,14 @@ const { signup, login, refreshToken, logout} = require('../controllers/authContr
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - email
- *               - password
- *             properties:
- *               email:
- *                 type: string
- *                 example: jasmin@example.com
- *               password:
- *                 type: string
- *                 example: mysecurepassword
+ *             $ref: '#/components/schemas/LoginRequest'
  *     responses:
  *       200:
  *         description: JWT and refresh token returned
  *       401:
  *         description: Invalid credentials
+ *       404:
+ *         description: User not found
  */
 
 /**
@@ -87,25 +60,42 @@ const { signup, login, refreshToken, logout} = require('../controllers/authContr
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - refreshToken
- *             properties:
- *               refreshToken:
- *                 type: string
- *                 example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ *             $ref: '#/components/schemas/RefreshTokenRequest'
  *     responses:
  *       200:
  *         description: New access token returned
  *       401:
- *         description: Refresh token required
+ *         description: Refresh token missing
  *       403:
  *         description: Invalid or expired refresh token
  */
 
+/**
+ * @swagger
+ * /api/v1/auth/logout:
+ *   post:
+ *     summary: Logout the user and invalidate the refresh token
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/RefreshTokenRequest'
+ *     responses:
+ *       200:
+ *         description: User logged out successfully
+ *       400:
+ *         description: Refresh token required
+ *       404:
+ *         description: Token not found
+ *       500:
+ *         description: Server error during logout
+ */
+
 router.post('/signup', signup);
 router.post('/login', login);
-router.post('/token', refreshToken); // NEW: Refresh token route
-router.post('/logout', logout); // Invalidate refresh token
+router.post('/token', refreshToken);
+router.post('/logout', logout);
 
 module.exports = router;
