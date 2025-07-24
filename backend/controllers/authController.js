@@ -53,7 +53,10 @@ exports.signup = async (req, res) => {
 exports.login = async (req, res) => {
   const { email, password } = req.body;
 
-  if (!user) {
+  try {
+    const user = await User.findOne({ where: { email } });
+
+    if (!user) {
       // Log failed login - user not found
       await Log.create({
         action: 'FAILED_LOGIN',
@@ -77,7 +80,6 @@ exports.login = async (req, res) => {
         type: 'warning',
         source: 'authController'
       });
-
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
@@ -85,7 +87,7 @@ exports.login = async (req, res) => {
     const accessToken = generateAccessToken(payload);
     const refreshToken = await generateRefreshToken(payload);
 
-    // Log login
+    // Log login success
     await Log.create({
       userId: user.id,
       action: 'LOGIN',
