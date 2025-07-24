@@ -8,14 +8,10 @@ const User = sequelize.define('User', {
   name: DataTypes.STRING,
 
   // User's email address (must be unique)
-  email: {
-  type: DataTypes.STRING,
-  allowNull: false,
-  unique: true,
-  validate: {
-    isEmail: true,
-  }
-},
+ email: {
+    type: DataTypes.STRING,
+    unique: true, // Prevent duplicate registrations
+  },
 
   // Hashed password (never store plain text!)
   password: DataTypes.STRING,
