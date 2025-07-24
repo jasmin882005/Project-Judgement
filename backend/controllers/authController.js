@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const RefreshToken = require('../models/RefreshToken');
+const { Log } = require('../models'); 
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
@@ -30,7 +31,18 @@ exports.signup = async (req, res) => {
 
   try {
     const hashed = await bcrypt.hash(password, 10);
-    await User.create({ name, email, password: hashed, role });
+    const newUser = await User.create({ name, email, password: hashed, role });
+
+    // Log signup
+    await Log.create({
+      userId: newUser.id,
+      action: 'SIGNUP',
+      event: `${newUser.name} signed up`,
+      createdBy: newUser.email,
+      type: 'info',
+      source: 'authController'
+    });
+
     res.status(201).json({ message: 'User registered successfully' });
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -51,6 +63,16 @@ exports.login = async (req, res) => {
     const payload = { id: user.id, role: user.role, email: user.email };
     const accessToken = generateAccessToken(payload);
     const refreshToken = await generateRefreshToken(payload);
+
+    // Log login
+    await Log.create({
+      userId: user.id,
+      action: 'LOGIN',
+      event: `${user.name} logged in`,
+      createdBy: user.email,
+      type: 'info',
+      source: 'authController'
+    });
 
     res.json({ accessToken, refreshToken });
   } catch (err) {
@@ -96,7 +118,23 @@ exports.logout = async (req, res) => {
   try {
     const deleted = await RefreshToken.destroy({ where: { token: refreshToken } });
 
-    if (deleted) return res.json({ message: 'Logged out successfully' });
+    if (deleted) {
+      // Decode the refresh token to get user info
+      const decoded = jwt.decode(refreshToken);
+
+      if (decoded && decoded.email) {
+        await Log.create({
+          userId: decoded.id,
+          action: 'LOGOUT',
+          event: `${decoded.email} logged out`,
+          createdBy: decoded.email,
+          type: 'info',
+          source: 'authController'
+        });
+      }
+
+      return res.json({ message: 'Logged out successfully' });
+    }
 
     res.status(404).json({ error: 'Token not found' });
   } catch (err) {
