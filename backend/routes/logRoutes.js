@@ -2,7 +2,7 @@
  * @swagger
  * tags:
  *   name: Logs
- *   description: API for storing and retrieving drone operation logs
+ *   description: API for storing and retrieving system and drone logs
  */
 
 const express = require('express');
@@ -26,20 +26,10 @@ const { Op } = require('sequelize');
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - droneId
- *               - event
- *             properties:
- *               droneId:
- *                 type: string
- *                 example: DRN-001
- *               event:
- *                 type: string
- *                 example: Battery low warning
+ *             $ref: '#/components/schemas/LogInput'
  *     responses:
  *       201:
- *         description: Log created
+ *         description: Log created successfully
  *       400:
  *         description: Bad request
  *       401:
@@ -60,39 +50,64 @@ router.post('/', verifyToken, createLog);
  *         name: droneId
  *         schema:
  *           type: string
- *         description: Filter logs by drone ID
+ *         description: Filter by drone ID
  *       - in: query
  *         name: event
  *         schema:
  *           type: string
- *         description: Filter logs by event keyword
+ *         description: Search logs by event message
+ *       - in: query
+ *         name: action
+ *         schema:
+ *           type: string
+ *         description: Filter logs by action type (e.g., LOGIN, LOGOUT)
+ *       - in: query
+ *         name: type
+ *         schema:
+ *           type: string
+ *           enum: [info, warning, error]
+ *       - in: query
+ *         name: source
+ *         schema:
+ *           type: string
+ *         description: Filter logs by system source (e.g., authController)
  *       - in: query
  *         name: from
  *         schema:
  *           type: string
  *           format: date
- *         description: Start date (YYYY-MM-DD)
+ *         description: Filter from this date
  *       - in: query
  *         name: to
  *         schema:
  *           type: string
  *           format: date
- *         description: End date (YYYY-MM-DD)
+ *         description: Filter to this date
  *     responses:
  *       200:
- *         description: Filtered list of logs
- *       403:
- *         description: Forbidden
+ *         description: Logs retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/LogEntry'
  *       401:
  *         description: Unauthorized
+ *       403:
+ *         description: Forbidden (non-admin)
  */
 router.get('/', verifyToken, roleCheck('admin'), async (req, res) => {
   try {
-    const { droneId, event, from, to } = req.query;
+    const { droneId, event, action, type, source, from, to } = req.query;
     const where = {};
 
     if (droneId) where.droneId = droneId;
     if (event) where.event = { [Op.iLike]: `%${event}%` };
+    if (action) where.action = action;
+    if (type) where.type = type;
+    if (source) where.source = source;
+
     if (from || to) {
       where.createdAt = {};
       if (from) where.createdAt[Op.gte] = new Date(from);
@@ -109,7 +124,5 @@ router.get('/', verifyToken, roleCheck('admin'), async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch logs' });
   }
 });
-
-
 
 module.exports = router;
