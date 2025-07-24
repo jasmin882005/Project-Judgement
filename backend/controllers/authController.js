@@ -53,12 +53,33 @@ exports.signup = async (req, res) => {
 exports.login = async (req, res) => {
   const { email, password } = req.body;
 
-  try {
-    const user = await User.findOne({ where: { email } });
-    if (!user) return res.status(404).json({ error: 'User not found' });
+  if (!user) {
+      // Log failed login - user not found
+      await Log.create({
+        action: 'FAILED_LOGIN',
+        event: `Login failed - user not found for email: ${email}`,
+        userId: null,
+        createdBy: email,
+        type: 'warning',
+        source: 'authController'
+      });
+      return res.status(404).json({ error: 'User not found' });
+    }
 
     const match = await bcrypt.compare(password, user.password);
-    if (!match) return res.status(401).json({ error: 'Invalid credentials' });
+    if (!match) {
+      // Log failed login - incorrect password
+      await Log.create({
+        action: 'FAILED_LOGIN',
+        event: `Login failed - incorrect password for ${email}`,
+        userId: user.id,
+        createdBy: user.email,
+        type: 'warning',
+        source: 'authController'
+      });
+
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
 
     const payload = { id: user.id, role: user.role, email: user.email };
     const accessToken = generateAccessToken(payload);
