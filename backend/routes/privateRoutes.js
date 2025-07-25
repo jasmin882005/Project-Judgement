@@ -8,7 +8,7 @@
 const express = require('express');
 const router = express.Router();
 const verifyToken = require('../middlewares/verifyToken');
-const { User } = require('../models'); // Import User model
+const { User } = require('../models');
 
 /**
  * @swagger
@@ -24,7 +24,7 @@ const { User } = require('../models'); // Import User model
  *         content:
  *           application/json:
  *             example:
- *               message: "Hello, Jasmin Jamadar! You accessed a protected route."
+ *               message: "Hello, Jasmin Jamadar (User ID: 1)! You accessed a protected route."
  *       401:
  *         description: Authorization header missing
  *       403:
@@ -33,15 +33,13 @@ const { User } = require('../models'); // Import User model
 router.get('/', verifyToken, async (req, res) => {
   try {
     const user = await User.findByPk(req.user.id);
+    if (!user) return res.status(404).json({ error: 'User not found' });
 
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    res.json({ message: `Hello, ${user.name}! You accessed a protected route.` });
+    res.json({
+      message: `Hello, ${user.name} (User ID: ${user.id})! You accessed a protected route.`,
+    });
   } catch (err) {
-    console.error('Error fetching user info:', err);
-    res.status(500).json({ error: 'Failed to fetch user info' });
+    res.status(500).json({ error: 'Failed to retrieve user info' });
   }
 });
 
