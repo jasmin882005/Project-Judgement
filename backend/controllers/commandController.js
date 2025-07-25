@@ -29,7 +29,7 @@ exports.sendCommand = async (req, res) => {
 
     res.status(201).json(newCommand);
   } catch (err) {
-    // ❌ Log failure
+    // Log failure
     await logEvent({
       action: "COMMAND_FAILED",
       event: "Error sending command",
