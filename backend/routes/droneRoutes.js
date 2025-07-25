@@ -4,12 +4,13 @@
  *   name: Drone
  *   description: Drone registration and listing
  */
+
 const express = require('express');
 const router = express.Router();
 const verifyToken = require('../middlewares/verifyToken');
 const roleCheck = require('../middlewares/roleCheck');
 const { createDrone, getDroneStatus, getAllDrones } = require('../controllers/droneController');
-const { Drone } = require('../models'); 
+const { Drone } = require('../models');
 
 /**
  * @swagger
@@ -40,7 +41,7 @@ const { Drone } = require('../models');
  *                 type: string
  *                 example: active
  *               battery:
- *                 type: number
+ *                 type: integer
  *                 example: 87
  *               gps_location:
  *                 type: object
@@ -59,6 +60,8 @@ const { Drone } = require('../models');
  *       403:
  *         description: Unauthorized
  */
+router.post('/', verifyToken, roleCheck('admin'), createDrone);
+
 /**
  * @swagger
  * /api/v1/drones/status/{droneId}:
@@ -82,6 +85,7 @@ const { Drone } = require('../models');
  *       500:
  *         description: Server error
  */
+router.get('/status/:droneId', verifyToken, getDroneStatus);
 
 /**
  * @swagger
@@ -105,20 +109,30 @@ const { Drone } = require('../models');
  *           schema:
  *             type: object
  *             properties:
- *               name:
+ *               model:
  *                 type: string
  *               status:
  *                 type: string
  *                 example: active
- *               model:
- *                 type: string
+ *               battery:
+ *                 type: integer
+ *                 example: 78
  *               gps_location:
- *                 type: string
+ *                 type: object
+ *                 properties:
+ *                   lat:
+ *                     type: number
+ *                     example: 22.57
+ *                   lng:
+ *                     type: number
+ *                     example: 88.36
  *     responses:
  *       200:
  *         description: Drone updated successfully
  *       404:
  *         description: Drone not found
+ *       500:
+ *         description: Server error
  */
 router.put('/:id', verifyToken, roleCheck('admin'), async (req, res) => {
   try {
@@ -154,6 +168,8 @@ router.put('/:id', verifyToken, roleCheck('admin'), async (req, res) => {
  *         description: Drone deleted successfully
  *       404:
  *         description: Drone not found
+ *       500:
+ *         description: Server error
  */
 router.delete('/:id', verifyToken, roleCheck('admin'), async (req, res) => {
   try {
@@ -168,12 +184,5 @@ router.delete('/:id', verifyToken, roleCheck('admin'), async (req, res) => {
     res.status(500).json({ error: 'Failed to delete drone' });
   }
 });
-
-// Add drone — admin only
-router.post('/', verifyToken, roleCheck('admin'), createDrone);
-
-
-// View single drone status
-router.get('/status/:droneId', verifyToken, getDroneStatus);
 
 module.exports = router;
