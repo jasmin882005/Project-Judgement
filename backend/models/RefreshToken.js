@@ -1,4 +1,3 @@
-// models/RefreshToken.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
 
@@ -6,16 +5,19 @@ const RefreshToken = sequelize.define('RefreshToken', {
   token: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true,
+    unique: true
   },
   userId: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: false
   },
   expiryDate: {
     type: DataTypes.DATE,
-    allowNull: false,
-  },
+    allowNull: false
+  }
+}, {
+  tableName: 'refresh_tokens',
+  timestamps: true
 });
 
 module.exports = RefreshToken;
