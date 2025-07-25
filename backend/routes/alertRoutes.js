@@ -10,7 +10,7 @@ const router = express.Router();
 const { createAlert, getAlerts } = require('../controllers/alertController');
 const verifyToken = require('../middlewares/verifyToken');
 const roleCheck = require('../middlewares/roleCheck');
-const { Alert } = require('../models'); // For PUT route
+const { Alert } = require('../models');
 
 /**
  * @swagger
@@ -171,9 +171,5 @@ router.put('/:id/resolve', verifyToken, roleCheck('admin'), async (req, res) => 
     res.status(500).json({ error: 'Failed to update alert' });
   }
 });
-
-
-router.post('/', verifyToken, createAlert);
-router.get('/', verifyToken, getAlerts);
 
 module.exports = router;
