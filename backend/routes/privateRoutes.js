@@ -1,16 +1,36 @@
-// Import required modules
+/**
+ * @swagger
+ * tags:
+ *   name: Private
+ *   description: Protected test route (requires JWT)
+ */
+
 const express = require('express');
 const router = express.Router();
-
-// Import middleware that checks for valid JWT token
 const verifyToken = require('../middlewares/verifyToken');
 
-// GET /api/private
-// This is a protected test route — only accessible if token is valid
+/**
+ * @swagger
+ * /api/v1/private:
+ *   get:
+ *     summary: Access a protected route (token required)
+ *     tags: [Private]
+ *     security:
+ *       - JWTAuth: []
+ *     responses:
+ *       200:
+ *         description: Successfully accessed protected route
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "Hello, user 123! You accessed a protected route."
+ *       401:
+ *         description: Authorization header missing
+ *       403:
+ *         description: Token invalid or expired
+ */
 router.get('/', verifyToken, (req, res) => {
-  // If token is valid, req.user will be available (decoded JWT)
   res.json({ message: `Hello, user ${req.user.id}! You accessed a protected route.` });
 });
 
-// Export router so it can be used in server.js
 module.exports = router;
