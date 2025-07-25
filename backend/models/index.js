@@ -1,25 +1,25 @@
-// Import Sequelize constructor and data types
-const { Sequelize, DataTypes } = require('sequelize');
+// models/index.js
 
-// Import configured Sequelize instance (connected to your PostgreSQL DB)
+const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
 
-// Create a db object to store all models + connection
 const db = {};
 
-db.Sequelize = Sequelize;   // Sequelize library reference (optional)
-db.sequelize = sequelize;   // Actual DB connection instance
+db.Sequelize = Sequelize;
+db.sequelize = sequelize;
 
-// Load and register all Sequelize models
-db.User = require('./User');         // User model (auth, roles)
-db.Mission = require('./Mission');   // Mission model (planning)
-db.Telemetry = require('./Telemetry'); // Live telemetry from drone
-db.Alert = require('./Alert');       // AI/ML alert logs
-db.Command = require('./Command');   // Command model (abort/reroute/etc.)
-// models/index.js
+// Load models
+db.User = require('./User');
+db.RefreshToken = require('./RefreshToken');
+db.Mission = require('./Mission');
+db.Telemetry = require('./Telemetry');
+db.Alert = require('./Alert');
+db.Command = require('./Command');
 db.Log = require('./Log');
 db.Drone = require('./Drone');
 
+// Define associations (optional but helpful)
+db.User.hasMany(db.RefreshToken, { foreignKey: 'userId', onDelete: 'CASCADE' });
+db.RefreshToken.belongsTo(db.User, { foreignKey: 'userId' });
 
-// Export everything so it can be used across the app
 module.exports = db;
