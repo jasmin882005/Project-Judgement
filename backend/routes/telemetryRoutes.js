@@ -1,7 +1,13 @@
+/**
+ * @swagger
+ * tags:
+ *   name: Telemetry
+ *   description: Real-time telemetry tracking from drones
+ */
+
 const express = require('express');
 const router = express.Router();
 const { body, validationResult } = require('express-validator');
-
 const { receiveTelemetry } = require('../controllers/telemetryController');
 const verifyToken = require('../middlewares/verifyToken');
 const roleCheck = require('../middlewares/roleCheck');
@@ -31,55 +37,53 @@ const { fn, col } = require('sequelize');
  *             properties:
  *               droneId:
  *                 type: string
+ *                 example: DRN-001
  *               gps:
  *                 type: object
  *                 properties:
  *                   lat:
  *                     type: number
+ *                     example: 22.57
  *                   lng:
  *                     type: number
+ *                     example: 88.36
  *               altitude:
  *                 type: number
+ *                 example: 150
  *               speed:
  *                 type: number
+ *                 example: 60
  *               battery:
  *                 type: number
+ *                 example: 78
  *     responses:
  *       201:
  *         description: Telemetry saved
  *       400:
  *         description: Invalid input
  */
-
-// Validation middleware for structured JSON input
 const telemetryValidation = [
   body('droneId')
     .isString().withMessage('droneId must be a string')
     .matches(/^[\w-]+$/).withMessage('droneId contains invalid characters'),
-
   body('gps')
     .isObject().withMessage('gps must be a JSON object like { "lat": ..., "lng": ... }'),
   body('gps.lat')
-    .isFloat({ min: -90, max: 90 }).withMessage('Latitude must be a valid float between -90 and 90'),
+    .isFloat({ min: -90, max: 90 }).withMessage('Latitude must be between -90 and 90'),
   body('gps.lng')
-    .isFloat({ min: -180, max: 180 }).withMessage('Longitude must be a valid float between -180 and 180'),
-
+    .isFloat({ min: -180, max: 180 }).withMessage('Longitude must be between -180 and 180'),
   body('altitude')
     .isFloat().withMessage('Altitude must be a float'),
-
   body('speed')
     .isFloat().withMessage('Speed must be a float'),
-
   body('battery')
-    .isFloat({ min: 0, max: 100 }).withMessage('Battery must be a float between 0 and 100')
+    .isFloat({ min: 0, max: 100 }).withMessage('Battery must be between 0 and 100'),
 ];
 
-// POST: Save telemetry
+// Submit telemetry (validated)
 router.post('/', verifyToken, telemetryValidation, async (req, res) => {
   const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
+  if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
   return receiveTelemetry(req, res);
 });
 
@@ -93,22 +97,18 @@ router.post('/', verifyToken, telemetryValidation, async (req, res) => {
  *       - JWTAuth: []
  *     responses:
  *       200:
- *         description: All telemetry records fetched
+ *         description: All telemetry records
  *       500:
- *         description: Failed to fetch telemetry data
+ *         description: Failed to fetch data
  */
 router.get('/all', verifyToken, roleCheck('admin'), async (req, res) => {
   try {
-    const records = await Telemetry.findAll({
-      order: [['createdAt', 'DESC']]
-    });
-
+    const records = await Telemetry.findAll({ order: [['createdAt', 'DESC']] });
     res.json(records);
-  } catch (error) {
+  } catch {
     res.status(500).json({ error: 'Failed to fetch telemetry records' });
   }
 });
-
 
 /**
  * @swagger
@@ -120,7 +120,9 @@ router.get('/all', verifyToken, roleCheck('admin'), async (req, res) => {
  *       - JWTAuth: []
  *     responses:
  *       200:
- *         description: List of unique drone IDs
+ *         description: List of drone IDs
+ *       500:
+ *         description: Fetch failed
  */
 router.get('/drone-ids', verifyToken, roleCheck('admin'), async (req, res) => {
   try {
@@ -129,7 +131,7 @@ router.get('/drone-ids', verifyToken, roleCheck('admin'), async (req, res) => {
       raw: true
     });
     res.json(droneIds.map(d => d.droneId));
-  } catch (err) {
+  } catch {
     res.status(500).json({ error: 'Failed to fetch drone IDs' });
   }
 });
@@ -138,7 +140,7 @@ router.get('/drone-ids', verifyToken, roleCheck('admin'), async (req, res) => {
  * @swagger
  * /api/v1/telemetry/{droneId}:
  *   get:
- *     summary: Get latest telemetry record for a specific drone (admin only)
+ *     summary: Get latest telemetry for a specific drone (admin only)
  *     tags: [Telemetry]
  *     security:
  *       - JWTAuth: []
@@ -151,9 +153,11 @@ router.get('/drone-ids', verifyToken, roleCheck('admin'), async (req, res) => {
  *         description: ID of the drone
  *     responses:
  *       200:
- *         description: Telemetry data found
+ *         description: Latest telemetry record
  *       404:
- *         description: No telemetry found for this drone
+ *         description: Telemetry not found
+ *       500:
+ *         description: Fetch error
  */
 router.get('/:droneId', verifyToken, roleCheck('admin'), async (req, res) => {
   try {
@@ -163,12 +167,10 @@ router.get('/:droneId', verifyToken, roleCheck('admin'), async (req, res) => {
       order: [['createdAt', 'DESC']]
     });
 
-    if (!data) {
-      return res.status(404).json({ error: 'No telemetry found for this drone' });
-    }
+    if (!data) return res.status(404).json({ error: 'No telemetry found for this drone' });
 
     res.json(data);
-  } catch (err) {
+  } catch {
     res.status(500).json({ error: 'Failed to fetch telemetry' });
   }
 });
