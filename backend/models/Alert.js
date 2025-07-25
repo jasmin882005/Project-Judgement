@@ -1,25 +1,34 @@
-// Import required Sequelize components
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/db'); // Your DB connection instance
+const sequelize = require('../config/db');
 
-// Define the Alert model (table: Alerts)
+// Define the Alert model
 const Alert = sequelize.define('Alert', {
-  // The alert message content (e.g., "Obstacle detected")
-  message: DataTypes.STRING,
-
-  // Severity level: e.g., "info", "warning", or "critical"
-  level: DataTypes.STRING,
-
-  // When the alert was triggered
-  timestamp: DataTypes.DATE,
-
-  // ID of the drone that sent the alert
-  droneId: DataTypes.STRING,
+  message: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  level: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    validate: {
+      isIn: [['info', 'warning', 'critical']]
+    }
+  },
+  timestamp: {
+    type: DataTypes.DATE,
+    defaultValue: DataTypes.NOW
+  },
+  droneId: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
   resolved: {
     type: DataTypes.BOOLEAN,
-    defaultValue: false  
+    defaultValue: false
   }
+}, {
+  tableName: 'alerts',     // fix table name
+  timestamps: true         // Adds createdAt, updatedAt
 });
 
-// Export the model for use in controllers and other parts of the app
 module.exports = Alert;
