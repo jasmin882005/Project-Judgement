@@ -4,7 +4,6 @@
  *   name: Command
  *   description: API to send commands to drones
  */
-
 const express = require("express");
 const router = express.Router();
 
@@ -26,18 +25,8 @@ const { Command } = require('../models');
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - droneId
- *               - command
- *             properties:
- *               droneId:
- *                 type: string
- *                 example: DR-101
- *               command:
- *                 type: string
- *                 enum: [abort, reroute, return]
- *                 example: abort
+ *             allOf:
+ *               - $ref: '#/components/schemas/CommandInput'
  *     responses:
  *       201:
  *         description: Command created and stored
@@ -120,14 +109,8 @@ router.get('/', verifyToken, roleCheck('admin'), async (req, res) => {
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               command:
- *                 type: string
- *                 example: return
- *               status:
- *                 type: string
- *                 example: executed
+ *             allOf:
+ *               - $ref: '#/components/schemas/CommandInput'
  *     responses:
  *       200:
  *         description: Command updated successfully
