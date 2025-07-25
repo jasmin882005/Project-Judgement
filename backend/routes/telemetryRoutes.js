@@ -14,54 +14,7 @@ const roleCheck = require('../middlewares/roleCheck');
 const { Telemetry } = require('../models');
 const { fn, col } = require('sequelize');
 
-/**
- * @swagger
- * /api/v1/telemetry:
- *   post:
- *     summary: Submit telemetry data
- *     tags: [Telemetry]
- *     security:
- *       - JWTAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - droneId
- *               - gps
- *               - altitude
- *               - speed
- *               - battery
- *             properties:
- *               droneId:
- *                 type: string
- *                 example: DRN-001
- *               gps:
- *                 type: object
- *                 properties:
- *                   lat:
- *                     type: number
- *                     example: 22.57
- *                   lng:
- *                     type: number
- *                     example: 88.36
- *               altitude:
- *                 type: number
- *                 example: 150
- *               speed:
- *                 type: number
- *                 example: 60
- *               battery:
- *                 type: number
- *                 example: 78
- *     responses:
- *       201:
- *         description: Telemetry saved
- *       400:
- *         description: Invalid input
- */
+// Validation middleware
 const telemetryValidation = [
   body('droneId')
     .isString().withMessage('droneId must be a string')
@@ -80,7 +33,26 @@ const telemetryValidation = [
     .isFloat({ min: 0, max: 100 }).withMessage('Battery must be between 0 and 100'),
 ];
 
-// Submit telemetry (validated)
+/**
+ * @swagger
+ * /api/v1/telemetry:
+ *   post:
+ *     summary: Submit telemetry data
+ *     tags: [Telemetry]
+ *     security:
+ *       - JWTAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/TelemetryInput'
+ *     responses:
+ *       201:
+ *         description: Telemetry saved
+ *       400:
+ *         description: Invalid input
+ */
 router.post('/', verifyToken, telemetryValidation, async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
