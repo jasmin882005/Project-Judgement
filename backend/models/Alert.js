@@ -28,6 +28,7 @@ const Alert = sequelize.define('Alert', {
   }
 }, {
   tableName: 'alerts',     // fix table name
+  freezeTableName: true,    // Prevent Sequelize from modifying table name
   timestamps: true         // Adds createdAt, updatedAt
 });
 
