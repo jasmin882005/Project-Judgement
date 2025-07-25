@@ -17,6 +17,7 @@ const Command = sequelize.define("Command", {
   }
 }, {
   tableName: "commands",   // Fix table name
+  freezeTableName: true,    // Prevent Sequelize from modifying table name
   timestamps: true         // Adds createdAt, updatedAt
 });
 
