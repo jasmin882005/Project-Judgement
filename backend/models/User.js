@@ -27,6 +27,7 @@ const User = sequelize.define('User', {
   }
 }, {
   tableName: 'users',
+  freezeTableName: true,    // Prevent Sequelize from modifying table name
   timestamps: true
 });
 
