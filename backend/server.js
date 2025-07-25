@@ -16,7 +16,7 @@ let server;
 
 if (process.env.NODE_ENV === 'production') {
   // On Render or other hosting, use default HTTP (Render adds HTTPS)
-  server = require('http').createServer(app);
+  server = http.createServer(app);
   console.log('Production mode: using HTTP (Render handles HTTPS)');
 } else {
   try {
@@ -52,161 +52,95 @@ io.on('connection', (socket) => {
 // Global Middleware
 app.use(cors());
 app.use(helmet({
-  contentSecurityPolicy: false, // disable CSP for external fonts, Swagger UI etc.
+  contentSecurityPolicy: false, // Disable CSP for external fonts, Swagger UI etc.
 }));
-
 app.use(responseTime());
 app.use(express.json());
 app.use(performanceLogger);
-// Ignore favicon.ico requests to prevent unnecessary 404 logs
+
+// Ignore favicon.ico requests
 app.use('/favicon.ico', (req, res) => res.sendStatus(204));
 
-
+// Serve static files (if any, e.g., logo)
 const path = require('path');
 app.use(express.static(path.join(__dirname)));
-//Project Judgement API is Live
+
+// Root route — Welcome Page
 app.get('/', (req, res) => {
-  res.send(`
-<!DOCTYPE html>
+  res.send(`<!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project Judgement API</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Poppins', sans-serif;
-            background: #360033;
-            background: -webkit-linear-gradient(to right, #0b8793, #360033);
-            background: linear-gradient(to right, #0b8793, #360033);
-            height: 100vh;
-            color: #F8F8F8;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            position: relative;
-            z-index: 1;
-        }
-
-        body::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: -1;
-        }
-
-        h1 {
-            font-size: 2.8rem;
-            margin-bottom: 10px;
-            animation: fadeIn 1s ease-in;
-        }
-
-        p {
-            font-size: 1.1rem;
-            margin-bottom: 30px;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin-bottom: 30px;
-        }
-
-        a.button {
-            padding: 12px 25px;
-            font-size: 1rem;
-            font-weight: 600;
-            border-radius: 12px;
-            color: #EEEEEE;
-            background: transparent;
-            box-shadow: 0 5px 15px rgb(72, 166, 167, 0.1);
-            border: 1px solid #EEEEEE;
-            text-decoration: none;
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
-        }
-
-        a.button:hover {
-            background-color: #034C53;
-            border-color: #360033;
-            color: #360033;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgb(72, 166, 167, 0.3);
-        }
-
-        .logo {
-            width: 400px;
-            display: block;
-            margin-bottom: -3rem;
-
-        }
-
-        .footer {
-            position: absolute;
-            bottom: 20px;
-            font-size: 0.9rem;
-            opacity: 0.8;
-        }
-
-        @media (max-width: 600px) {
-            .logo {
-                width: 350px;
-                margin-bottom: -2rem;
-            }
-
-            h1 {
-                font-size: 2rem;
-            }
-
-            p {
-                font-size: 1rem;
-            }
-
-            a.button {
-                padding: 10px 20px;
-                font-size: 0.9rem;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Project Judgement API</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body {
+      margin: 0; padding: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to right, #0b8793, #360033);
+      height: 100vh; color: #F8F8F8;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      text-align: center; position: relative; z-index: 1;
+    }
+    body::before {
+      content: ""; position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: -1;
+    }
+    h1 { font-size: 2.8rem; margin-bottom: 10px; }
+    p { font-size: 1.1rem; margin-bottom: 30px; }
+    .button-group {
+      display: flex; gap: 20px;
+      flex-wrap: wrap; justify-content: center;
+      margin-bottom: 30px;
+    }
+    a.button {
+      padding: 12px 25px; font-size: 1rem;
+      font-weight: 600; border-radius: 12px;
+      color: #EEEEEE; background: transparent;
+      box-shadow: 0 5px 15px rgb(72, 166, 167, 0.1);
+      border: 1px solid #EEEEEE;
+      text-decoration: none; backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+    }
+    a.button:hover {
+      background-color: #034C53;
+      border-color: #360033; color: #360033;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgb(72, 166, 167, 0.3);
+    }
+    .logo {
+      width: 400px; display: block;
+      margin-bottom: -3rem;
+    }
+    .footer {
+      position: absolute; bottom: 20px;
+      font-size: 0.9rem; opacity: 0.8;
+    }
+    @media (max-width: 600px) {
+      .logo { width: 350px; margin-bottom: -2rem; }
+      h1 { font-size: 2rem; }
+      p, a.button { font-size: 1rem; }
+    }
+  </style>
 </head>
-
 <body>
-    <img src="logo.png" alt="Project Judgement Logo" class="logo" />
-    <h1>Project Judgement API is Live</h1>
-    <p>Welcome to the backend service. View full documentation below:</p>
-
-    <div class="button-group">
-        <a class="button" href="/api-docs" target="_blank">
-            <i class="fas fa-file-code fa-xl" style="margin-right: 10px;"></i>View API Docs
-        </a>
-        <a class="button"
-            href="https://github.com/jasmin882005/Project-Judgement/tree/backend-code-submission-jasmin/backend"
-            target="_blank">
-            <i class="fab fa-github fa-xl" style="margin-right: 10px;"></i>GitHub Repo
-        </a>
-    </div>
-
-    <div class="footer">Version: 1.0.0 | Build: 22 July 2025</div>
+  <img src="logo.png" alt="Project Judgement Logo" class="logo" />
+  <h1>Project Judgement API is Live</h1>
+  <p>Welcome to the backend service. View full documentation below:</p>
+  <div class="button-group">
+    <a class="button" href="/api-docs" target="_blank"><i class="fas fa-file-code fa-xl" style="margin-right: 10px;"></i>View API Docs</a>
+    <a class="button" href="https://github.com/jasmin882005/Project-Judgement/tree/backend-code-submission-jasmin/backend" target="_blank"><i class="fab fa-github fa-xl" style="margin-right: 10px;"></i>GitHub Repo</a>
+  </div>
+  <div class="footer">Version: 1.0.0 | Build: 22 July 2025</div>
 </body>
-
-</html>
-  `);
+</html>`);
 });
-
 
 // Routes
 const sequelize = require('./config/db');
@@ -232,9 +166,8 @@ app.use('/api/v1/logs', logRoutes);
 app.use('/api/v1/drones', droneRoutes);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
-
 // Handle 404 - Route Not Found
-app.use((req, res, next) => {
+app.use((req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
@@ -245,7 +178,9 @@ app.use(errorHandler);
 sequelize.authenticate()
   .then(() => {
     console.log('PostgreSQL Connected');
-    return sequelize.sync();
+    return sequelize.sync({
+      alter: process.env.NODE_ENV !== 'production'  // Smart sync
+    });
   })
   .then(() => {
     const PORT = process.env.PORT || 5000;
