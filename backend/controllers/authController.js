@@ -1,15 +1,20 @@
 const User = require('../models/User');
 const RefreshToken = require('../models/RefreshToken');
-const { Log } = require('../models'); 
+const { Log } = require('../models');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
-// Access token (short-lived)
+// Helper: Create logs in a consistent way
+const logEvent = async ({ action, event, userId = null, createdBy = 'system', type = 'info', source = 'authController' }) => {
+  await Log.create({ action, event, userId, createdBy, type, source });
+};
+
+// Generate Access Token (1 hour)
 const generateAccessToken = (user) => {
   return jwt.sign(user, process.env.JWT_SECRET, { expiresIn: '1h' });
 };
 
-// Refresh token (stored in DB, longer-lived)
+// Generate Refresh Token (7 days, stored in DB)
 const generateRefreshToken = async (user) => {
   const token = jwt.sign(user, process.env.REFRESH_SECRET, { expiresIn: '7d' });
 
@@ -25,22 +30,24 @@ const generateRefreshToken = async (user) => {
   return token;
 };
 
-// Signup
+// Signup controller
 exports.signup = async (req, res) => {
   const { name, email, password, role } = req.body;
+
+  // Basic input validation
+  if (!name || !email || !password || !role) {
+    return res.status(400).json({ error: 'All fields are required' });
+  }
 
   try {
     const hashed = await bcrypt.hash(password, 10);
     const newUser = await User.create({ name, email, password: hashed, role });
 
-    // Log signup
-    await Log.create({
-      userId: newUser.id,
+    await logEvent({
       action: 'SIGNUP',
       event: `${newUser.name} signed up`,
+      userId: newUser.id,
       createdBy: newUser.email,
-      type: 'info',
-      source: 'authController'
     });
 
     res.status(201).json({ message: 'User registered successfully' });
@@ -49,36 +56,35 @@ exports.signup = async (req, res) => {
   }
 };
 
-// Login
+// Login controller
 exports.login = async (req, res) => {
   const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ error: 'Email and password are required' });
+  }
 
   try {
     const user = await User.findOne({ where: { email } });
 
     if (!user) {
-      // Log failed login - user not found
-      await Log.create({
+      await logEvent({
         action: 'FAILED_LOGIN',
         event: `Login failed - user not found for email: ${email}`,
-        userId: null,
         createdBy: email,
         type: 'warning',
-        source: 'authController'
       });
       return res.status(404).json({ error: 'User not found' });
     }
 
     const match = await bcrypt.compare(password, user.password);
     if (!match) {
-      // Log failed login - incorrect password
-      await Log.create({
+      await logEvent({
         action: 'FAILED_LOGIN',
         event: `Login failed - incorrect password for ${email}`,
         userId: user.id,
         createdBy: user.email,
         type: 'warning',
-        source: 'authController'
       });
       return res.status(401).json({ error: 'Invalid credentials' });
     }
@@ -87,14 +93,11 @@ exports.login = async (req, res) => {
     const accessToken = generateAccessToken(payload);
     const refreshToken = await generateRefreshToken(payload);
 
-    // Log login success
-    await Log.create({
-      userId: user.id,
+    await logEvent({
       action: 'LOGIN',
       event: `${user.name} logged in`,
+      userId: user.id,
       createdBy: user.email,
-      type: 'info',
-      source: 'authController'
     });
 
     res.json({ accessToken, refreshToken });
@@ -103,19 +106,16 @@ exports.login = async (req, res) => {
   }
 };
 
-// Refresh token → generate new access token
+// Refresh Token controller
 exports.refreshToken = async (req, res) => {
   const { refreshToken } = req.body;
 
   if (!refreshToken) {
-    // Missing token
-    await Log.create({
+    await logEvent({
       action: 'REFRESH_FAILED',
       event: 'Refresh token missing in request',
-      userId: null,
       createdBy: 'unknown',
       type: 'warning',
-      source: 'authController'
     });
     return res.status(401).json({ error: 'Refresh token required' });
   }
@@ -124,45 +124,37 @@ exports.refreshToken = async (req, res) => {
     const found = await RefreshToken.findOne({ where: { token: refreshToken } });
 
     if (!found) {
-      // Token not found in DB
-      await Log.create({
+      await logEvent({
         action: 'REFRESH_FAILED',
         event: 'Refresh token not found in database',
-        userId: null,
         createdBy: 'unknown',
         type: 'warning',
-        source: 'authController'
       });
-
       return res.status(403).json({ error: 'Invalid refresh token' });
     }
 
     if (new Date() > found.expiryDate) {
       await found.destroy();
 
-      // decode to get user info
       const decoded = jwt.decode(refreshToken);
-      await Log.create({
+      await logEvent({
         action: 'REFRESH_EXPIRED',
         event: `Expired refresh token used by ${decoded?.email || 'unknown'}`,
         userId: decoded?.id || null,
         createdBy: decoded?.email || 'unknown',
         type: 'warning',
-        source: 'authController'
       });
+
       return res.status(403).json({ error: 'Refresh token expired' });
     }
 
     jwt.verify(refreshToken, process.env.REFRESH_SECRET, async (err, user) => {
       if (err) {
-        // Verification failed
-        await Log.create({
+        await logEvent({
           action: 'REFRESH_FAILED',
           event: 'Refresh token verification failed',
-          userId: null,
           createdBy: 'unknown',
           type: 'warning',
-          source: 'authController'
         });
 
         return res.status(403).json({ error: 'Token verification failed' });
@@ -171,15 +163,13 @@ exports.refreshToken = async (req, res) => {
       const payload = { id: user.id, role: user.role, email: user.email };
       const newAccessToken = generateAccessToken(payload);
 
-      await Log.create({
+      await logEvent({
         action: 'REFRESH_SUCCESS',
         event: `${user.email} refreshed access token`,
         userId: user.id,
         createdBy: user.email,
-        type: 'info',
-        source: 'authController'
       });
-      
+
       res.json({ accessToken: newAccessToken });
     });
   } catch (err) {
@@ -187,7 +177,7 @@ exports.refreshToken = async (req, res) => {
   }
 };
 
-// Logout → delete refresh token
+// Logout controller
 exports.logout = async (req, res) => {
   const { refreshToken } = req.body;
 
@@ -197,17 +187,14 @@ exports.logout = async (req, res) => {
     const deleted = await RefreshToken.destroy({ where: { token: refreshToken } });
 
     if (deleted) {
-      // Decode the refresh token to get user info
       const decoded = jwt.decode(refreshToken);
 
       if (decoded && decoded.email) {
-        await Log.create({
-          userId: decoded.id,
+        await logEvent({
           action: 'LOGOUT',
           event: `${decoded.email} logged out`,
+          userId: decoded.id,
           createdBy: decoded.email,
-          type: 'info',
-          source: 'authController'
         });
       }
 
