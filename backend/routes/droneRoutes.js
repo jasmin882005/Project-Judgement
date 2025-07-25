@@ -9,7 +9,7 @@ const express = require('express');
 const router = express.Router();
 const verifyToken = require('../middlewares/verifyToken');
 const roleCheck = require('../middlewares/roleCheck');
-const { createDrone, getDroneStatus, getAllDrones } = require('../controllers/droneController');
+const { createDrone, getDroneStatus } = require('../controllers/droneController');
 const { Drone } = require('../models');
 
 /**
@@ -25,33 +25,7 @@ const { Drone } = require('../models');
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - droneId
- *               - status
- *               - battery
- *             properties:
- *               droneId:
- *                 type: string
- *                 example: DRN-001
- *               model:
- *                 type: string
- *                 example: DJI Mavic 3
- *               status:
- *                 type: string
- *                 example: active
- *               battery:
- *                 type: integer
- *                 example: 87
- *               gps_location:
- *                 type: object
- *                 properties:
- *                   lat:
- *                     type: number
- *                     example: 22.57
- *                   lng:
- *                     type: number
- *                     example: 88.36
+ *             $ref: '#/components/schemas/DroneInput'
  *     responses:
  *       201:
  *         description: Drone added successfully
@@ -107,25 +81,7 @@ router.get('/status/:droneId', verifyToken, getDroneStatus);
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               model:
- *                 type: string
- *               status:
- *                 type: string
- *                 example: active
- *               battery:
- *                 type: integer
- *                 example: 78
- *               gps_location:
- *                 type: object
- *                 properties:
- *                   lat:
- *                     type: number
- *                     example: 22.57
- *                   lng:
- *                     type: number
- *                     example: 88.36
+ *             $ref: '#/components/schemas/DroneInput'
  *     responses:
  *       200:
  *         description: Drone updated successfully
