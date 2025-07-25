@@ -95,11 +95,13 @@ router.put('/:id', verifyToken, roleCheck('admin'), async (req, res) => {
     const { id } = req.params;
     const updated = await Drone.update(req.body, { where: { id } });
 
-    if (!updated[0])
+    if (!updated[0]) {
       return res.status(404).json({ error: 'Drone not found' });
+    }
 
     res.json({ message: 'Drone updated successfully' });
   } catch (err) {
+    console.error('Drone update error:', err);
     res.status(500).json({ error: 'Failed to update drone' });
   }
 });
@@ -132,11 +134,13 @@ router.delete('/:id', verifyToken, roleCheck('admin'), async (req, res) => {
     const { id } = req.params;
     const deleted = await Drone.destroy({ where: { id } });
 
-    if (!deleted)
+    if (!deleted) {
       return res.status(404).json({ error: 'Drone not found' });
+    }
 
     res.json({ message: 'Drone deleted successfully' });
   } catch (err) {
+    console.error('Drone deletion error:', err);
     res.status(500).json({ error: 'Failed to delete drone' });
   }
 });
