@@ -36,6 +36,7 @@ const Log = sequelize.define('Log', {
   }
 }, {
   tableName: 'logs',
+  freezeTableName: true,    // Prevent Sequelize from modifying table name
   timestamps: true
 });
 
