@@ -65,10 +65,20 @@ const { Mission } = require('../models');
  *                       example: 88.36
  *     responses:
  *       201:
- *         description: Mission created
+ *         description: Mission created successfully
+ *       400:
+ *         description: Validation error
  *       403:
- *         description: Unauthorized
+ *         description: Unauthorized access
  */
+router.post(
+  '/',
+  verifyToken,
+  roleCheck('admin'),
+  missionValidationRules,
+  validate,
+  createMission
+);
 
 /**
  * @swagger
@@ -80,10 +90,11 @@ const { Mission } = require('../models');
  *       - JWTAuth: []
  *     responses:
  *       200:
- *         description: List of missions
+ *         description: List of missions retrieved successfully
  *       403:
  *         description: Unauthorized
  */
+router.get('/', verifyToken, getMissions);
 
 /**
  * @swagger
@@ -99,18 +110,33 @@ const { Mission } = require('../models');
  *         required: true
  *         schema:
  *           type: integer
+ *         description: Mission ID
  *     responses:
  *       200:
- *         description: Mission details
+ *         description: Mission details retrieved
  *       404:
  *         description: Mission not found
  */
+router.get('/:id', verifyToken, async (req, res) => {
+  try {
+    const id = req.params.id;
+    const mission = await Mission.findByPk(id);
+
+    if (!mission) {
+      return res.status(404).json({ error: 'Mission not found' });
+    }
+
+    res.json(mission);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch mission' });
+  }
+});
 
 /**
  * @swagger
  * /api/v1/missions/{id}:
  *   put:
- *     summary: Update a mission (admin only)
+ *     summary: Update a mission by ID (admin only)
  *     tags: [Mission]
  *     security:
  *       - JWTAuth: []
@@ -147,11 +173,21 @@ const { Mission } = require('../models');
  *     responses:
  *       200:
  *         description: Mission updated successfully
+ *       400:
+ *         description: Validation error
  *       403:
  *         description: Unauthorized
  *       404:
  *         description: Mission not found
  */
+router.put(
+  '/:id',
+  verifyToken,
+  roleCheck('admin'),
+  missionValidationRules,
+  validate,
+  updateMission
+);
 
 /**
  * @swagger
@@ -167,59 +203,22 @@ const { Mission } = require('../models');
  *         required: true
  *         schema:
  *           type: integer
+ *         description: ID of the mission
  *     responses:
  *       200:
- *         description: Mission deleted
+ *         description: Mission deleted successfully
  *       404:
  *         description: Mission not found
+ *       500:
+ *         description: Server error
  */
-
-// Route: POST /api/v1/missions
-router.post(
-  '/',
-  verifyToken,
-  roleCheck('admin'),
-  missionValidationRules,
-  validate,
-  createMission
-);
-
-// Route: GET /api/v1/missions
-router.get('/', verifyToken, getMissions);
-
-// Route: GET /api/v1/missions/:id
-router.get('/:id', verifyToken, async (req, res) => {
-  try {
-    const id = req.params.id;
-    const mission = await Mission.findByPk(id);
-
-    if (!mission) {
-      return res.status(404).json({ error: 'Mission not found' });
-    }
-
-    res.json(mission);
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch mission' });
-  }
-});
-
-// Route: PUT /api/v1/missions/:id
-router.put(
-  '/:id',
-  verifyToken,
-  roleCheck('admin'),
-  missionValidationRules,
-  validate,
-  updateMission
-);
-
-// Route: DELETE /api/v1/missions/:id
 router.delete('/:id', verifyToken, roleCheck('admin'), async (req, res) => {
   try {
     const id = req.params.id;
     const deleted = await Mission.destroy({ where: { id } });
 
-    if (!deleted) return res.status(404).json({ error: 'Mission not found' });
+    if (!deleted)
+      return res.status(404).json({ error: 'Mission not found' });
 
     res.json({ message: 'Mission deleted successfully' });
   } catch (err) {
