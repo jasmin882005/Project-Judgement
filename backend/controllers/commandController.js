@@ -1,12 +1,9 @@
-// Import the Command model from models/index.js
-// Destructured in case there are multiple exports
 const { Command } = require("../models");
+const { logEvent } = require("../utils/logger"); // Reusable logging helper
 
-// Controller to handle POST /api/commands
-// This allows the frontend to send drone control commands (abort, reroute, return)
+// POST /api/commands → Send command to drone
 exports.sendCommand = async (req, res) => {
   try {
-    // Extract droneId and command type from request body
     const { droneId, command } = req.body;
 
     // Validate command type
@@ -14,39 +11,67 @@ exports.sendCommand = async (req, res) => {
       return res.status(400).json({ error: "Invalid command type" });
     }
 
-    // Create and store the command in the database
-    // Status is set to "pending" by default (can later be updated by drone/AI)
+    // Create command in DB
     const newCommand = await Command.create({
       droneId,
       command,
       status: "pending",
     });
 
-    // Respond with the created command object
+    // Log success
+    await logEvent({
+      action: "COMMAND_SENT",
+      event: `Command "${command}" sent to drone ${droneId}`,
+      createdBy: req.user?.email || "system",
+      type: "info",
+      source: "commandController",
+    });
+
     res.status(201).json(newCommand);
   } catch (err) {
-    // Handle errors like DB failure or bad input
+    // ❌ Log failure
+    await logEvent({
+      action: "COMMAND_FAILED",
+      event: "Error sending command",
+      createdBy: req.user?.email || "system",
+      type: "error",
+      source: "commandController",
+    });
+
     res.status(500).json({ error: "Failed to send command" });
   }
 };
 
-
-// Get all commands for a specific drone
+// GET /api/commands/:droneId → Fetch all commands for a specific drone
 exports.getCommandsByDrone = async (req, res) => {
   try {
     const { droneId } = req.params;
 
     const commands = await Command.findAll({
       where: { droneId },
-      order: [['createdAt', 'DESC']]
+      order: [['createdAt', 'DESC']],
     });
 
     if (!commands.length) {
-      return res.status(404).json({ error: 'No commands found for this drone' });
+      await logEvent({
+        action: "NO_COMMANDS",
+        event: `No commands found for drone ${droneId}`,
+        type: "warning",
+        source: "commandController",
+      });
+      return res.status(404).json({ error: "No commands found for this drone" });
     }
 
     res.json(commands);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch commands' });
+    await logEvent({
+      action: "COMMAND_FETCH_FAILED",
+      event: "Error retrieving commands",
+      createdBy: req.user?.email || "system",
+      type: "error",
+      source: "commandController",
+    });
+
+    res.status(500).json({ error: "Failed to fetch commands" });
   }
 };
