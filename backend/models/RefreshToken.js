@@ -17,6 +17,7 @@ const RefreshToken = sequelize.define('RefreshToken', {
   }
 }, {
   tableName: 'refresh_tokens',
+  freezeTableName: true,    // Prevent Sequelize from modifying table name
   timestamps: true
 });
 
