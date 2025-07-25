@@ -24,6 +24,7 @@ const Mission = sequelize.define('Mission', {
   }
 }, {
   tableName: 'missions',
+  freezeTableName: true,    // Prevent Sequelize from modifying table name
   timestamps: true
 });
 
