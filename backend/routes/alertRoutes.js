@@ -25,25 +25,7 @@ const { Alert } = require('../models');
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - message
- *               - level
- *               - droneId
- *             properties:
- *               message:
- *                 type: string
- *                 example: Battery below 20%
- *               level:
- *                 type: string
- *                 example: warning
- *               timestamp:
- *                 type: string
- *                 format: date-time
- *                 example: 2025-07-11T10:30:00Z
- *               droneId:
- *                 type: string
- *                 example: DRN-002
+ *             $ref: '#/components/schemas/AlertInput'
  *     responses:
  *       201:
  *         description: Alert created
@@ -58,7 +40,7 @@ router.post('/', verifyToken, createAlert);
  * @swagger
  * /api/v1/alerts:
  *   get:
- *     summary: Get all alerts 
+ *     summary: Get all alerts
  *     tags: [Alert]
  *     security:
  *       - JWTAuth: []
@@ -89,14 +71,7 @@ router.get('/', verifyToken, getAlerts);
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               message:
- *                 type: string
- *                 example: Updated message
- *               level:
- *                 type: string
- *                 example: critical
+ *             $ref: '#/components/schemas/AlertInput'
  *     responses:
  *       200:
  *         description: Alert updated successfully
@@ -107,11 +82,10 @@ router.get('/', verifyToken, getAlerts);
  */
 router.put('/:id', verifyToken, roleCheck('admin'), async (req, res) => {
   try {
-    const id = req.params.id;
+    const { id } = req.params;
     const updated = await Alert.update(req.body, { where: { id } });
 
-    if (!updated[0])
-      return res.status(404).json({ error: 'Alert not found' });
+    if (!updated[0]) return res.status(404).json({ error: 'Alert not found' });
 
     res.json({ message: 'Alert updated successfully' });
   } catch (err) {
@@ -134,8 +108,6 @@ router.put('/:id', verifyToken, roleCheck('admin'), async (req, res) => {
  *         schema:
  *           type: integer
  *         description: Alert ID to mark as resolved
- *     requestBody:
- *       required: false
  *     responses:
  *       200:
  *         description: Alert marked as resolved
@@ -158,7 +130,7 @@ router.put('/:id', verifyToken, roleCheck('admin'), async (req, res) => {
  */
 router.put('/:id/resolve', verifyToken, roleCheck('admin'), async (req, res) => {
   try {
-    const id = req.params.id;
+    const { id } = req.params;
 
     const alert = await Alert.findByPk(id);
     if (!alert) return res.status(404).json({ error: 'Alert not found' });
