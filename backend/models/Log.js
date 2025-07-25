@@ -1,4 +1,3 @@
-// models/Log.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
 
@@ -13,15 +12,15 @@ const Log = sequelize.define('Log', {
   },
   action: {
     type: DataTypes.STRING,
-    allowNull: true  
+    allowNull: true
   },
   userId: {
     type: DataTypes.INTEGER,
     allowNull: true
   },
   type: {
-    type: DataTypes.STRING,
-    defaultValue: 'info',
+    type: DataTypes.ENUM('info', 'warning', 'error'),
+    defaultValue: 'info'
   },
   createdBy: {
     type: DataTypes.STRING,
@@ -35,6 +34,9 @@ const Log = sequelize.define('Log', {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW
   }
+}, {
+  tableName: 'logs',
+  timestamps: true
 });
 
 module.exports = Log;
