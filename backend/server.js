@@ -59,7 +59,7 @@ app.use(express.json());
 app.use(performanceLogger);
 
 const path = require('path');
-app.use(express.static(path.join(__dirname)));
+app.use(express.static(__dirname));
 
 // Root route — Welcome Page
 app.get('/', (req, res) => {
