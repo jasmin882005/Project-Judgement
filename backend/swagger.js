@@ -17,7 +17,7 @@ const options = {
       {
         url: 'https://localhost:5000',
         description: 'Local HTTPS Development Server',
-  }
+      },
     ],
     components: {
       securitySchemes: {
@@ -32,18 +32,9 @@ const options = {
           type: 'object',
           required: ['name', 'email', 'password', 'role'],
           properties: {
-            name: {
-              type: 'string',
-              example: 'Jasmin Jamadar',
-            },
-            email: {
-              type: 'string',
-              example: 'jasmin@example.com',
-            },
-            password: {
-              type: 'string',
-              example: 'mysecurepassword',
-            },
+            name: { type: 'string', example: 'Jasmin Jamadar' },
+            email: { type: 'string', example: 'jasmin@example.com' },
+            password: { type: 'string', example: 'mysecurepassword' },
             role: {
               type: 'string',
               enum: ['admin', 'operator'],
@@ -55,14 +46,8 @@ const options = {
           type: 'object',
           required: ['email', 'password'],
           properties: {
-            email: {
-              type: 'string',
-              example: 'jasmin@example.com',
-            },
-            password: {
-              type: 'string',
-              example: 'mysecurepassword',
-            },
+            email: { type: 'string', example: 'jasmin@example.com' },
+            password: { type: 'string', example: 'mysecurepassword' },
           },
         },
         RefreshTokenRequest: {
@@ -79,27 +64,15 @@ const options = {
           type: 'object',
           required: ['event'],
           properties: {
-            droneId: {
-              type: 'string',
-              example: 'DRN-001',
-            },
-            event: {
-              type: 'string',
-              example: 'Battery low warning',
-            },
+            droneId: { type: 'string', example: 'DRN-001' },
+            event: { type: 'string', example: 'Battery low warning' },
             type: {
               type: 'string',
               enum: ['info', 'warning', 'error'],
               example: 'warning',
             },
-            action: {
-              type: 'string',
-              example: 'FAILED_LOGIN',
-            },
-            source: {
-              type: 'string',
-              example: 'authController',
-            },
+            action: { type: 'string', example: 'FAILED_LOGIN' },
+            source: { type: 'string', example: 'authController' },
           },
         },
         LogEntry: {
@@ -113,16 +86,28 @@ const options = {
             type: { type: 'string', example: 'warning' },
             createdBy: { type: 'string', example: 'admin@system.com' },
             source: { type: 'string', example: 'authController' },
-            timestamp: { type: 'string', format: 'date-time', example: '2025-07-24T12:00:00.000Z' },
-            createdAt: { type: 'string', format: 'date-time', example: '2025-07-24T12:00:00.000Z' },
-            updatedAt: { type: 'string', format: 'date-time', example: '2025-07-24T12:00:00.000Z' },
+            timestamp: {
+              type: 'string',
+              format: 'date-time',
+              example: '2025-07-24T12:00:00.000Z',
+            },
+            createdAt: {
+              type: 'string',
+              format: 'date-time',
+              example: '2025-07-24T12:00:00.000Z',
+            },
+            updatedAt: {
+              type: 'string',
+              format: 'date-time',
+              example: '2025-07-24T12:00:00.000Z',
+            },
           },
         },
       },
     },
     security: [{ JWTAuth: [] }],
   },
-  apis: ['./routes/*.js'],
+  apis: ['./routes/*.js'], // Scans all routes
 };
 
 const specs = swaggerJsdoc(options);
