@@ -112,6 +112,22 @@ const options = {
           },
         },
 
+        //Alerts Input
+        AlertInput: {
+  type: 'object',
+  required: ['message', 'level', 'droneId'],
+  properties: {
+    message: { type: 'string', example: 'Battery below 20%' },
+    level: { type: 'string', example: 'warning' },
+    droneId: { type: 'string', example: 'DRN-002' },
+    timestamp: {
+      type: 'string',
+      format: 'date-time',
+      example: '2025-07-11T10:30:00Z',
+    },
+  },
+},
+
         // Command Input
         CommandInput: {
           type: 'object',
