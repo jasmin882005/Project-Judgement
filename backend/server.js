@@ -51,10 +51,16 @@ io.on('connection', (socket) => {
 
 // Global Middleware
 app.use(cors());
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: false, // disable CSP for external fonts, Swagger UI etc.
+}));
+
 app.use(responseTime());
 app.use(express.json());
 app.use(performanceLogger);
+// Ignore favicon.ico requests to prevent unnecessary 404 logs
+app.use('/favicon.ico', (req, res) => res.sendStatus(204));
+
 
 const path = require('path');
 app.use(express.static(path.join(__dirname)));
@@ -225,6 +231,12 @@ app.use('/api/v1/commands', commandRoutes);
 app.use('/api/v1/logs', logRoutes);
 app.use('/api/v1/drones', droneRoutes);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+
+
+// Handle 404 - Route Not Found
+app.use((req, res, next) => {
+  res.status(404).json({ error: 'Route not found' });
+});
 
 // Global Error Handler
 app.use(errorHandler);
