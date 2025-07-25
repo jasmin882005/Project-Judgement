@@ -1,6 +1,12 @@
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 
+const isProduction = process.env.NODE_ENV === 'production';
+
+const serverUrl = isProduction
+  ? 'https://project-judgement.onrender.com'
+  : 'https://localhost:443';
+
 const options = {
   definition: {
     openapi: '3.0.0',
@@ -11,12 +17,8 @@ const options = {
     },
     servers: [
       {
-        url: 'https://project-judgement.onrender.com',
-        description: 'Render Deployed Server',
-      },
-      {
-        url: 'https://localhost:5000',
-        description: 'Local HTTPS Development Server',
+        url: serverUrl,
+        description: isProduction ? 'Render Deployed Server' : 'Local Development Server',
       },
     ],
     components: {
