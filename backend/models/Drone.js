@@ -28,6 +28,7 @@ const Drone = sequelize.define('Drone', {
   }
 }, {
   tableName: 'drones',
+  freezeTableName: true,    // Prevent Sequelize from modifying table name
   timestamps: true
 });
 
