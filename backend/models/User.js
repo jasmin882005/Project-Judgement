@@ -1,24 +1,33 @@
-// Import Sequelize data types
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/db'); // DB connection
+const sequelize = require('../config/db');
 
-// Define the User model (table: Users)
 const User = sequelize.define('User', {
-  // User's full name
-  name: DataTypes.STRING,
-
-  // User's email address (must be unique)
- email: {
+  name: {
     type: DataTypes.STRING,
-    unique: true, // Prevent duplicate registrations
+    allowNull: false
   },
 
-  // Hashed password (never store plain text!)
-  password: DataTypes.STRING,
+  email: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
+    validate: {
+      isEmail: true
+    }
+  },
 
-  // Role of the user: either "admin" or "operator"
-  role: DataTypes.STRING,
+  password: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+
+  role: {
+    type: DataTypes.ENUM('admin', 'operator'),
+    allowNull: false
+  }
+}, {
+  tableName: 'users',
+  timestamps: true
 });
 
-// Export the User model to use in authController and middleware
 module.exports = User;
