@@ -28,6 +28,7 @@ const options = {
         },
       },
       schemas: {
+        // Signup
         SignupRequest: {
           type: 'object',
           required: ['name', 'email', 'password', 'role'],
@@ -42,6 +43,8 @@ const options = {
             },
           },
         },
+
+        // Login
         LoginRequest: {
           type: 'object',
           required: ['email', 'password'],
@@ -50,6 +53,8 @@ const options = {
             password: { type: 'string', example: 'mysecurepassword' },
           },
         },
+
+        // Refresh
         RefreshTokenRequest: {
           type: 'object',
           required: ['refreshToken'],
@@ -60,6 +65,8 @@ const options = {
             },
           },
         },
+
+        // Logs
         LogInput: {
           type: 'object',
           required: ['event'],
@@ -75,6 +82,7 @@ const options = {
             source: { type: 'string', example: 'authController' },
           },
         },
+
         LogEntry: {
           type: 'object',
           properties: {
@@ -103,11 +111,64 @@ const options = {
             },
           },
         },
+
+        // Command Input
+        CommandInput: {
+          type: 'object',
+          required: ['droneId', 'command'],
+          properties: {
+            droneId: { type: 'string', example: 'DR-101' },
+            command: {
+              type: 'string',
+              enum: ['abort', 'reroute', 'return', 'move', 'takeoff', 'land'],
+              example: 'abort',
+            },
+          },
+        },
+
+        // Telemetry Input
+        TelemetryInput: {
+          type: 'object',
+          required: ['droneId', 'gps', 'altitude', 'speed', 'battery'],
+          properties: {
+            droneId: { type: 'string', example: 'DRN-003' },
+            gps: {
+              type: 'object',
+              properties: {
+                lat: { type: 'number', example: 22.57 },
+                lng: { type: 'number', example: 88.36 },
+              },
+            },
+            altitude: { type: 'number', example: 150.5 },
+            speed: { type: 'number', example: 35.8 },
+            battery: { type: 'number', example: 78 },
+          },
+        },
+
+        // Drone Input
+        DroneInput: {
+          type: 'object',
+          required: ['droneId', 'status', 'battery'],
+          properties: {
+            droneId: { type: 'string', example: 'DRN-001' },
+            model: { type: 'string', example: 'DJI Mavic 3' },
+            status: { type: 'string', example: 'active' },
+            battery: { type: 'number', example: 87 },
+            gps_location: {
+              type: 'object',
+              properties: {
+                lat: { type: 'number', example: 22.57 },
+                lng: { type: 'number', example: 88.36 },
+              },
+            },
+          },
+        },
       },
     },
     security: [{ JWTAuth: [] }],
   },
-  apis: ['./routes/*.js'], // Scans all routes
+
+  apis: ['./routes/*.js'],
 };
 
 const specs = swaggerJsdoc(options);
