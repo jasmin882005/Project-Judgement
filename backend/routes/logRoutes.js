@@ -55,34 +55,35 @@ router.post('/', verifyToken, createLog);
  *         name: event
  *         schema:
  *           type: string
- *         description: Search logs by event message
+ *         description: Search logs by partial event message
  *       - in: query
  *         name: action
  *         schema:
  *           type: string
- *         description: Filter logs by action type (e.g., LOGIN, LOGOUT)
+ *         description: Filter logs by action type (e.g., LOGIN, FAILED_LOGIN)
  *       - in: query
  *         name: type
  *         schema:
  *           type: string
  *           enum: [info, warning, error]
+ *         description: Filter logs by severity level
  *       - in: query
  *         name: source
  *         schema:
  *           type: string
- *         description: Filter logs by system source (e.g., authController)
+ *         description: Source module or controller that generated the log
  *       - in: query
  *         name: from
  *         schema:
  *           type: string
  *           format: date
- *         description: Filter from this date
+ *         description: Filter logs from this date (YYYY-MM-DD)
  *       - in: query
  *         name: to
  *         schema:
  *           type: string
  *           format: date
- *         description: Filter to this date
+ *         description: Filter logs up to this date (YYYY-MM-DD)
  *     responses:
  *       200:
  *         description: Logs retrieved successfully
@@ -108,6 +109,7 @@ router.get('/', verifyToken, roleCheck('admin'), async (req, res) => {
     if (type) where.type = type;
     if (source) where.source = source;
 
+    // Date filtering
     if (from || to) {
       where.createdAt = {};
       if (from) where.createdAt[Op.gte] = new Date(from);
@@ -121,6 +123,7 @@ router.get('/', verifyToken, roleCheck('admin'), async (req, res) => {
 
     res.json(logs);
   } catch (err) {
+    console.error('Log fetch error:', err);
     res.status(500).json({ error: 'Failed to fetch logs' });
   }
 });
