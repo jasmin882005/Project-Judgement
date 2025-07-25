@@ -27,6 +27,7 @@ const Telemetry = sequelize.define('Telemetry', {
   }
 }, {
   tableName: 'telemetries',
+  freezeTableName: true,    // Prevent Sequelize from modifying table name
   timestamps: true
 });
 
