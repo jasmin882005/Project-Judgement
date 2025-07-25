@@ -1,28 +1,30 @@
-// Import Sequelize data types
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/db'); // DB connection instance
+const sequelize = require('../config/db');
 
-// Define the Mission model (table: Missions)
 const Mission = sequelize.define('Mission', {
-  // Name/title of the mission (e.g., "Surveillance Run A")
-  name: DataTypes.STRING,
-
-  // Objective or description of the mission (can be multi-line)
-  objective: DataTypes.TEXT,
-
-  // Current status: could be "pending", "active", or "complete"
-  status: DataTypes.STRING,
-
-  // ID of the assigned drone (e.g., "DR-001")
-  assignedDrone: DataTypes.STRING,
-
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  objective: {
+    type: DataTypes.TEXT,
+    allowNull: false
+  },
+  status: {
+    type: DataTypes.ENUM('pending', 'active', 'complete'),
+    allowNull: false
+  },
+  assignedDrone: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
   waypoints: {
     type: DataTypes.JSON,
-    allowNull: true   // temporarily allow null
+    allowNull: true
   }
-
-
+}, {
+  tableName: 'missions',
+  timestamps: true
 });
 
-// Export the Mission model to use in controllers, routes, etc.
 module.exports = Mission;
