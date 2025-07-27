@@ -1,15 +1,16 @@
 const { logEvent } = require('../utils/logger');
 
+// Centralized error handler middleware
 module.exports = async (err, req, res, next) => {
   const statusCode = err.status || 500;
   const message = err.message || 'Internal Server Error';
 
-  // Log to console only in dev
+  // In dev mode, print detailed stack trace
   if (process.env.NODE_ENV !== 'production') {
     console.error('Error Stack Trace:', err.stack);
   }
 
-  // Log error to Log table
+  // Log uncaught error to DB
   await logEvent({
     action: 'UNCAUGHT_ERROR',
     event: message,
@@ -18,5 +19,6 @@ module.exports = async (err, req, res, next) => {
     source: 'errorHandler'
   });
 
+  // Respond with structured error message
   res.status(statusCode).json({ error: message });
 };
