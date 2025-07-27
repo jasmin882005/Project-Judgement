@@ -1,21 +1,21 @@
 const { logEvent } = require('../utils/logger');
 
 /**
- * Role-based access middleware
- * @param {string|string[]} requiredRoles - Single role or array of allowed roles
+ * Role-based access control middleware
+ * @param {string|string[]} requiredRoles - Allowed roles (e.g. 'admin', ['admin', 'operator'])
  */
 module.exports = (requiredRoles) => {
   return async (req, res, next) => {
     const user = req.user;
 
-    // Normalize requiredRoles to array
+    // Always treat roles as an array for uniform checks
     const allowed = Array.isArray(requiredRoles) ? requiredRoles : [requiredRoles];
 
-    // If no user or role mismatch
+    // Deny access if user is missing or role is not allowed
     if (!user || !allowed.includes(user.role)) {
       const attemptedBy = user?.email || 'unknown';
 
-      // Log access denied
+      // Log unauthorized access attempt
       await logEvent({
         action: 'ACCESS_DENIED',
         event: `Blocked access to ${req.originalUrl} — requires role: [${allowed.join(', ')}]`,
@@ -27,6 +27,6 @@ module.exports = (requiredRoles) => {
       return res.status(403).json({ error: 'Access denied' });
     }
 
-    next();
+    next();  // Role is valid, proceed
   };
 };
