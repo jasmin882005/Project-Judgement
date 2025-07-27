@@ -1,6 +1,7 @@
 const { validationResult } = require('express-validator');
 const { logEvent } = require('../utils/logger');
 
+// Middleware to handle request validation errors (used with express-validator)
 module.exports = async (req, res, next) => {
   const errors = validationResult(req);
 
@@ -10,7 +11,7 @@ module.exports = async (req, res, next) => {
       message: err.msg
     }));
 
-    // log validation failure
+    // Log validation error
     await logEvent({
       action: 'VALIDATION_FAILED',
       event: `Request validation failed on ${req.originalUrl}`,
@@ -19,8 +20,9 @@ module.exports = async (req, res, next) => {
       source: 'validateRequest'
     });
 
+    // Return 422 with structured error details
     return res.status(422).json({ errors: formattedErrors });
   }
 
-  next(); // No errors, continue
+  next(); // Input is valid → proceed
 };
