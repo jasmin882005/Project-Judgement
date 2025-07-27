@@ -1,8 +1,15 @@
+/**
+ * NOTE:
+ * Redis-related code (caching missions) is currently commented out
+ * due to errors during Render deployment. The rest of the logic is fully functional.
+ * Uncomment Redis blocks when deploying in a Redis-supported environment.
+ */
+
 const Mission = require('../models/Mission');
 const { logEvent } = require('../utils/logger');
-// const redisClient = require('../utils/redisClient');
+// const redisClient = require('../utils/redisClient'); // Redis caching
 
-// Helper: Validate mission fields
+// Validate mission fields before DB operations
 const validateMissionInput = ({ name, objective, status, assignedDrone, waypoints }) => {
   if (!name || typeof name !== 'string') return 'Name is required and must be a string';
   if (!objective || typeof objective !== 'string') return 'Objective is required and must be a string';
@@ -16,21 +23,21 @@ const validateMissionInput = ({ name, objective, status, assignedDrone, waypoint
     }
   }
 
-  return null; // Valid input
+  return null; 
 };
 
-// Create a new mission (POST /api/missions)
+// Create a new mission
+// Route: POST /api/missions
 exports.createMission = async (req, res) => {
   try {
     const { name, objective, status, assignedDrone, waypoints } = req.body;
 
-    // Validate input
     const validationError = validateMissionInput({ name, objective, status, assignedDrone, waypoints });
     if (validationError) return res.status(400).json({ error: validationError });
 
     const mission = await Mission.create({ name, objective, status, assignedDrone, waypoints });
 
-    // await redisClient.del('missions');
+    // await redisClient.del('missions'); // Clear cache if Redis is used
     await logEvent({
       action: 'MISSION_CREATED',
       event: `Mission "${name}" created and assigned to ${assignedDrone}`,
@@ -53,11 +60,11 @@ exports.createMission = async (req, res) => {
   }
 };
 
-// Fetch all missions (GET /api/missions) — with Redis retry fallback
+// Fetch all missions (supports Redis caching - optional)
 exports.getMissions = async (req, res) => {
   // let cachedMissions;
 
-  // // Try fetching from Redis with fallback handling
+  // // Redis caching logic
   // try {
   //   cachedMissions = await redisClient.get('missions');
   //   if (cachedMissions) {
@@ -68,11 +75,11 @@ exports.getMissions = async (req, res) => {
   //   console.warn('Redis unavailable, fallback to DB:', redisErr.message);
   // }
 
-  // Redis miss or failure → fetch from DB
   try {
     const missions = await Mission.findAll();
 
-    // Try setting the cache (if Redis comes back)
+    // cache result
+    
     // try {
     //   await redisClient.set('missions', JSON.stringify(missions), { EX: 60 });
     //   console.log('Cached missions in Redis');
@@ -96,7 +103,8 @@ exports.getMissions = async (req, res) => {
 };
 
 
-// Update a mission (PUT /api/missions/:id)
+// Update an existing mission by ID
+// Route: PUT /api/missions/:id
 exports.updateMission = async (req, res) => {
   try {
     const id = req.params.id;
@@ -122,7 +130,7 @@ exports.updateMission = async (req, res) => {
       return res.status(404).json({ error: 'Mission not found' });
     }
     
-    // await redisClient.del('missions');
+    // await redisClient.del('missions');  // Clear cache after update
     await logEvent({
       action: 'MISSION_UPDATED',
       event: `Mission "${name}" updated`,
