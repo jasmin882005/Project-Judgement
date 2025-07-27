@@ -1,17 +1,20 @@
 const { Log } = require('../models');
 const { logEvent } = require('../utils/logger');
 
-// POST /api/v1/logs → Manual log entry from frontend/admin
+// Manually create a log entry (admin/frontend use)
+// Route: POST /api/v1/logs
 exports.createLog = async (req, res) => {
   try {
     const { droneId, event, type = 'info', source = 'manual', action, userId } = req.body;
 
+    // Validate mandatory field
     if (!event) {
       return res.status(400).json({ error: 'Event is required' });
     }
 
     const createdBy = req.user?.email || 'anonymous';
 
+    // Save log to DB
     const log = await Log.create({
       droneId,
       event,
@@ -22,7 +25,7 @@ exports.createLog = async (req, res) => {
       userId
     });
 
-    // Log creation of log (meta!)
+    // Log that a manual log was created
     await logEvent({
       action: 'LOG_MANUAL_CREATE',
       event: `Manual log created with event: ${event}`,
