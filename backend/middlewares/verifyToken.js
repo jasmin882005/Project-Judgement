@@ -3,7 +3,7 @@ const { isBlacklisted } = require('../utils/tokenBlacklist');
 const { logEvent } = require('../utils/logger');
 
 /**
- * JWT verification middleware for protected routes
+ * Middleware to verify JWT and enforce access control on protected routes
  */
 function verifyToken(req, res, next) {
   const authHeader = req.headers['authorization'];
@@ -17,7 +17,7 @@ function verifyToken(req, res, next) {
     return res.status(403).json({ error: 'No token provided' });
   }
 
-  // Check token blacklist
+  // Reject if token is blacklisted (i.e., user has logged out)
   if (isBlacklisted(token)) {
     logEvent({
       action: 'TOKEN_REJECTED',
@@ -29,7 +29,7 @@ function verifyToken(req, res, next) {
     return res.status(403).json({ error: 'Token has been revoked' });
   }
 
-  // Verify token signature and expiration
+  // Verify token signature & expiry
   jwt.verify(token, process.env.JWT_SECRET, async (err, user) => {
     if (err) {
       await logEvent({
@@ -42,8 +42,8 @@ function verifyToken(req, res, next) {
       return res.status(403).json({ error: 'Invalid or expired token' });
     }
 
-    req.user = user; // Attach decoded payload
-    next();          // Proceed to next middleware
+    req.user = user; // Attach verified user payload to request
+    next();          // Token valid → proceed to route
   });
 }
 
