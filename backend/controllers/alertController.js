@@ -1,13 +1,14 @@
 const Alert = require('../models/Alert');
 
-// POST /api/v1/alerts - Create new alert and broadcast via WebSocket
+// Create a new alert and broadcast it via WebSocket
+// Route: POST /api/v1/alerts
 exports.createAlert = async (req, res) => {
   try {
     const { message, level, timestamp, droneId } = req.body;
-    // Save to DB
+    // Save alert to DB
     const alert = await Alert.create({ message, level, timestamp, droneId });
 
-    // Broadcast to all connected clients
+     // Emit alert to all connected WebSocket clients
     const io = req.app.get('io');
     io.emit('alert-raised', alert); // Broadcast to all clients
 
@@ -17,7 +18,8 @@ exports.createAlert = async (req, res) => {
   }
 };
 
-// GET /api/v1/alerts - Fetch all alerts
+// Fetch all stored alerts
+// Route: GET /api/v1/alerts
 exports.getAlerts = async (req, res) => {
   try {
     const alerts = await Alert.findAll();
