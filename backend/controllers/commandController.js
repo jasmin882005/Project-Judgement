@@ -1,17 +1,18 @@
 const { Command } = require("../models");
-const { logEvent } = require("../utils/logger"); // Reusable logging helper
+const { logEvent } = require("../utils/logger"); // Centralized logger
 
-// POST /api/commands → Send command to drone
+// Send a command to a drone
+// Route: POST /api/commands
 exports.sendCommand = async (req, res) => {
   try {
     const { droneId, command } = req.body;
 
-    // Validate command type
+    // Only allow predefined command types
     if (!["abort", "reroute", "return"].includes(command)) {
       return res.status(400).json({ error: "Invalid command type" });
     }
 
-    // Create command in DB
+    // Create new command with default status "pending"
     const newCommand = await Command.create({
       droneId,
       command,
@@ -42,7 +43,8 @@ exports.sendCommand = async (req, res) => {
   }
 };
 
-// GET /api/commands/:droneId → Fetch all commands for a specific drone
+// Get all commands sent to a specific drone
+// Route: GET /api/commands/:droneId
 exports.getCommandsByDrone = async (req, res) => {
   try {
     const { droneId } = req.params;
@@ -52,6 +54,7 @@ exports.getCommandsByDrone = async (req, res) => {
       order: [['createdAt', 'DESC']],
     });
 
+    // No commands found
     if (!commands.length) {
       await logEvent({
         action: "NO_COMMANDS",
