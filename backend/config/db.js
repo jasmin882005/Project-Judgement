@@ -9,8 +9,8 @@ const sequelize = new Sequelize(process.env.DB_URI, {
   dialect: 'postgres',
   dialectOptions: {
     ssl: {
-      require: true,                // Require SSL for remote DB
-      rejectUnauthorized: false    // Allow self-signed certs (for Render)
+      require: true,                // Enforce SSL (useful for platforms like Render)
+      rejectUnauthorized: false    // Allow self-signed certificates (for development-friendly deployment)
     }
   }
 });
