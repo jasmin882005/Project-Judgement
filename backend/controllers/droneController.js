@@ -1,15 +1,18 @@
 const { Drone } = require('../models');
 const { logEvent } = require('../utils/logger');
 
-// POST /api/v1/drones → Create a new drone
+// Register a new drone
+// Route: POST /api/v1/drones
 exports.createDrone = async (req, res) => {
   try {
     const { droneId, model, status, battery, gps_location } = req.body;
 
+    // Basic input validation
     if (!droneId || !model || battery === undefined || !gps_location) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
+    // Save drone to DB
     const drone = await Drone.create({
       droneId,
       model,
@@ -18,7 +21,7 @@ exports.createDrone = async (req, res) => {
       gps: gps_location
     });
 
-    // Log success
+    // Log creation
     await logEvent({
       action: 'DRONE_CREATED',
       event: `Drone ${droneId} registered`,
@@ -44,7 +47,8 @@ exports.createDrone = async (req, res) => {
   }
 };
 
-// GET /api/v1/drones/:droneId → Get status of a drone
+// Get status of a specific drone
+// Route: GET /api/v1/drones/:droneId
 exports.getDroneStatus = async (req, res) => {
   try {
     const { droneId } = req.params;
@@ -62,6 +66,7 @@ exports.getDroneStatus = async (req, res) => {
       return res.status(404).json({ error: 'Drone not found' });
     }
 
+    // Return current drone info
     res.status(200).json({
       id: drone.id,
       droneId: drone.droneId,
