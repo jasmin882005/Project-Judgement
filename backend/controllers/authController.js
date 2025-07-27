@@ -4,17 +4,17 @@ const { Log } = require('../models');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
-// Helper: Create logs in a consistent way
+// Log helper: creates standardized logs for all auth-related events
 const logEvent = async ({ action, event, userId = null, createdBy = 'system', type = 'info', source = 'authController' }) => {
   await Log.create({ action, event, userId, createdBy, type, source });
 };
 
-// Generate Access Token (1 hour)
+// Generate short-lived access token (1 hour)
 const generateAccessToken = (user) => {
   return jwt.sign(user, process.env.JWT_SECRET, { expiresIn: '1h' });
 };
 
-// Generate Refresh Token (7 days, stored in DB)
+// Generate refresh token (7 days) and persist in DB
 const generateRefreshToken = async (user) => {
   const token = jwt.sign(user, process.env.REFRESH_SECRET, { expiresIn: '7d' });
 
@@ -30,11 +30,10 @@ const generateRefreshToken = async (user) => {
   return token;
 };
 
-// Signup controller
+// Register new user
 exports.signup = async (req, res) => {
   const { name, email, password, role } = req.body;
 
-  // Basic input validation
   if (!name || !email || !password || !role) {
     return res.status(400).json({ error: 'All fields are required' });
   }
@@ -56,7 +55,7 @@ exports.signup = async (req, res) => {
   }
 };
 
-// Login controller
+// Authenticate user and issue tokens
 exports.login = async (req, res) => {
   const { email, password } = req.body;
 
@@ -106,7 +105,7 @@ exports.login = async (req, res) => {
   }
 };
 
-// Refresh Token controller
+// Handle token renewal using refresh token
 exports.refreshToken = async (req, res) => {
   const { refreshToken } = req.body;
 
@@ -177,7 +176,7 @@ exports.refreshToken = async (req, res) => {
   }
 };
 
-// Logout controller
+// Invalidate refresh token (logout)
 exports.logout = async (req, res) => {
   const { refreshToken } = req.body;
 
